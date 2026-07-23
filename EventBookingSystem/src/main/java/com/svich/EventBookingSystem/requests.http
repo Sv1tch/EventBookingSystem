@@ -1,0 +1,35 @@
+GET http://localhost:8080/api/categories
+
+###
+
+POST http://localhost:8080/api/categories
+Content-Type: application/json
+
+{
+  "name": "Clothes",
+  "description": "Clothes category of products"
+}
+
+###
+
+POST http://localhost:8080/api/categories
+Content-Type: application/json
+
+{
+  "name": "Phones",
+  "description": "Phones category of products"
+}
+
+###
+
+DELETE http://localhost:8080/api/categories/1
+
+###
+
+PUT http://localhost:8080/api/categories/2
+Content-Type: application/json
+
+{
+  "name": "phones2",
+  "description": "no more desc"
+}
