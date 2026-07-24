@@ -1,10 +1,8 @@
-package com.svich.EventBookingSystem.repository;
+package com.svich.EventBookingSystem.repository.category;
 
-import com.svich.EventBookingSystem.entity.Category;
+import com.svich.EventBookingSystem.entity.category.Category;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-
-import java.util.Optional;
 
 @Repository
 public interface CategoryRepository extends JpaRepository<Category, Long> {

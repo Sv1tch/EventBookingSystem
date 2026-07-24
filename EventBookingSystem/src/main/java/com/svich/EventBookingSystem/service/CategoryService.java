@@ -1,15 +1,15 @@
 package com.svich.EventBookingSystem.service;
 
-import com.svich.EventBookingSystem.dto.CategoryResponse;
-import com.svich.EventBookingSystem.dto.CreateCategoryRequest;
-import com.svich.EventBookingSystem.dto.UpdateCategoryRequest;
+import com.svich.EventBookingSystem.dto.category.response.CategoryResponse;
+import com.svich.EventBookingSystem.dto.category.request.CreateCategoryRequest;
+import com.svich.EventBookingSystem.dto.category.request.UpdateCategoryRequest;
 
 import java.util.List;
 
 public interface CategoryService {
-    CategoryResponse createCategory(CreateCategoryRequest request);
-    List<CategoryResponse> getAllCategories();
-    CategoryResponse getCategoryById(Long categoryId);
-    CategoryResponse updateCategoryById(Long categoryId, UpdateCategoryRequest request);
-    void deleteCategoryById(Long categoryId);
+    CategoryResponse create(CreateCategoryRequest request);
+    List<CategoryResponse> findAll();
+    CategoryResponse findById(Long categoryId);
+    CategoryResponse updateById(Long categoryId, UpdateCategoryRequest request);
+    void deleteById(Long categoryId);
 }

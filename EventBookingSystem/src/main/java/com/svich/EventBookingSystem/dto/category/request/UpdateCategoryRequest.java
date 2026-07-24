@@ -1,4 +1,4 @@
-package com.svich.EventBookingSystem.dto;
+package com.svich.EventBookingSystem.dto.category.request;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;

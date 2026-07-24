@@ -1,4 +1,4 @@
-package com.svich.EventBookingSystem.dto;
+package com.svich.EventBookingSystem.dto.category.response;
 
 import lombok.Getter;
 import lombok.Setter;

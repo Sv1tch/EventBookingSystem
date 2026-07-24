@@ -1,4 +1,4 @@
-package com.svich.EventBookingSystem.entity;
+package com.svich.EventBookingSystem.entity.category;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

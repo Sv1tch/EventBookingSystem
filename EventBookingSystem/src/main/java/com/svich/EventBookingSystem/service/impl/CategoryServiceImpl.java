@@ -1,12 +1,13 @@
 package com.svich.EventBookingSystem.service.impl;
 
-import com.svich.EventBookingSystem.exception.CategoryNotFoundException;
-import com.svich.EventBookingSystem.dto.CategoryResponse;
-import com.svich.EventBookingSystem.dto.CreateCategoryRequest;
-import com.svich.EventBookingSystem.dto.UpdateCategoryRequest;
-import com.svich.EventBookingSystem.entity.Category;
-import com.svich.EventBookingSystem.mapper.CategoryMapper;
-import com.svich.EventBookingSystem.repository.CategoryRepository;
+import com.svich.EventBookingSystem.exception.category.CategoryAlreadyExistsException;
+import com.svich.EventBookingSystem.exception.category.CategoryNotFoundException;
+import com.svich.EventBookingSystem.dto.category.response.CategoryResponse;
+import com.svich.EventBookingSystem.dto.category.request.CreateCategoryRequest;
+import com.svich.EventBookingSystem.dto.category.request.UpdateCategoryRequest;
+import com.svich.EventBookingSystem.entity.category.Category;
+import com.svich.EventBookingSystem.mapper.category.CategoryMapper;
+import com.svich.EventBookingSystem.repository.category.CategoryRepository;
 import com.svich.EventBookingSystem.service.CategoryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -21,7 +22,11 @@ public class CategoryServiceImpl implements CategoryService {
     private final CategoryMapper categoryMapper;
 
     @Override
-    public CategoryResponse createCategory(CreateCategoryRequest request){
+    public CategoryResponse create(CreateCategoryRequest request){
+        if(categoryRepository.existsByName(request.getName())){
+            throw new CategoryAlreadyExistsException("Category with name " + request.getName() + " already exists");
+        }
+
         Category category = categoryMapper.toEntity(request);
 
         Category savedCategory = categoryRepository.save(category);
@@ -30,22 +35,24 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public List<CategoryResponse> getAllCategories(){
+    public List<CategoryResponse> findAll(){
         List<Category> categories = categoryRepository.findAll();
 
         return categories.stream().map(categoryMapper::toResponse).toList();
     }
 
     @Override
-    public CategoryResponse getCategoryById(Long categoryId){
-        Category category = categoryRepository.findById(categoryId).orElseThrow(() -> new CategoryNotFoundException("Category not found"));
-
-        return categoryMapper.toResponse(category);
+    public CategoryResponse findById(Long categoryId){
+        return categoryMapper.toResponse(findCategoryById(categoryId));
     }
 
     @Override
-    public CategoryResponse updateCategoryById(Long categoryId, UpdateCategoryRequest request){
-        Category category = categoryRepository.findById(categoryId).orElseThrow(() -> new CategoryNotFoundException("Category not found"));
+    public CategoryResponse updateById(Long categoryId, UpdateCategoryRequest request){
+        Category category = findCategoryById(categoryId);
+
+        if(!category.getName().equals(request.getName()) && categoryRepository.existsByName(request.getName())){
+            throw new CategoryAlreadyExistsException("Category with id %d already exists".formatted(categoryId));
+        }
 
         categoryMapper.updateEntity(request, category);
 
@@ -55,11 +62,13 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public void deleteCategoryById(Long categoryId){
-        if(!categoryRepository.existsById(categoryId)){
-            throw new CategoryNotFoundException("Category not found");
-        }
+    public void deleteById(Long categoryId){
+        Category category = findCategoryById(categoryId);
 
-        categoryRepository.deleteById(categoryId);
+        categoryRepository.delete(category);
+    }
+
+    private Category findCategoryById(Long categoryId){
+        return categoryRepository.findById(categoryId).orElseThrow(() -> new CategoryNotFoundException("Category with id %d not found".formatted(categoryId)));
     }
 }

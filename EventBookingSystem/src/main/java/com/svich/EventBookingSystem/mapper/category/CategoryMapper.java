@@ -1,10 +1,10 @@
-package com.svich.EventBookingSystem.mapper;
+package com.svich.EventBookingSystem.mapper.category;
 
 
-import com.svich.EventBookingSystem.dto.CategoryResponse;
-import com.svich.EventBookingSystem.dto.CreateCategoryRequest;
-import com.svich.EventBookingSystem.dto.UpdateCategoryRequest;
-import com.svich.EventBookingSystem.entity.Category;
+import com.svich.EventBookingSystem.dto.category.response.CategoryResponse;
+import com.svich.EventBookingSystem.dto.category.request.CreateCategoryRequest;
+import com.svich.EventBookingSystem.dto.category.request.UpdateCategoryRequest;
+import com.svich.EventBookingSystem.entity.category.Category;
 import org.springframework.stereotype.Component;
 
 @Component
