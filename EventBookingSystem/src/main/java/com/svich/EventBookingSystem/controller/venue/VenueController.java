@@ -1,6 +1,7 @@
-package com.svich.EventBookingSystem.controller;
+package com.svich.EventBookingSystem.controller.venue;
 
 import com.svich.EventBookingSystem.dto.venue.request.CreateVenueRequest;
+import com.svich.EventBookingSystem.dto.venue.request.UpdateVenueRequest;
 import com.svich.EventBookingSystem.dto.venue.response.VenueResponse;
 import com.svich.EventBookingSystem.service.VenueService;
 import jakarta.validation.Valid;
@@ -37,5 +38,18 @@ public class VenueController {
         VenueResponse venue = venueService.findById(venueId);
 
         return new ResponseEntity<>(venue, HttpStatus.OK);
+    }
+
+    @PutMapping("/{venueId}")
+    public ResponseEntity<VenueResponse> updateById(@PathVariable Long venueId, @Valid @RequestBody UpdateVenueRequest venueRequest){
+        VenueResponse venue = venueService.updateById(venueId, venueRequest);
+
+        return new ResponseEntity<>(venue, HttpStatus.OK);
+    }
+
+    @DeleteMapping("/{venueId}")
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public void deleteById(@PathVariable Long venueId){
+        venueService.deleteById(venueId);
     }
 }

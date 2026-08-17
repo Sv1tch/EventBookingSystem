@@ -1,4 +1,4 @@
-package com.svich.EventBookingSystem.controller;
+package com.svich.EventBookingSystem.controller.category;
 
 import com.svich.EventBookingSystem.dto.category.response.CategoryResponse;
 import com.svich.EventBookingSystem.dto.category.request.CreateCategoryRequest;
