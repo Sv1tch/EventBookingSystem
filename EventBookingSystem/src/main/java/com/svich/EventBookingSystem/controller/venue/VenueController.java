@@ -48,7 +48,7 @@ public class VenueController {
     }
 
     @DeleteMapping("/{venueId}")
-    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteById(@PathVariable Long venueId){
         venueService.deleteById(venueId);
     }
