@@ -1,0 +1,608 @@
+Основні сутності
+User
+id
+
+
+firstName
+
+
+lastName
+
+
+email
+
+
+password
+
+
+phone
+
+
+createdAt
+
+
+updatedAt
+Event
+id
+
+
+title
+
+
+description
+
+
+startDateTime
+
+
+endDateTime
+
+
+ticketPrice
+
+
+capacity
+
+
+availableSeats
+
+
+status
+
+
+venue
+
+
+category
+
+
+organizer
+
+
+createdAt
+
+
+updatedAt
+Venue
+
+Місце проведення.
+
+id
+
+
+name
+
+
+city
+
+
+address
+
+
+capacity
+Category
+id
+
+
+name
+
+Приклади:
+
+Concert
+Conference
+Sport
+Festival
+Exhibition
+Booking
+id
+
+
+bookingDate
+
+
+numberOfTickets
+
+
+totalPrice
+
+
+status
+
+
+user
+
+
+event
+Review
+id
+
+
+rating
+
+
+comment
+
+
+createdAt
+
+
+user
+
+
+event
+Enum
+BookingStatus
+PENDING
+
+
+CONFIRMED
+
+
+CANCELLED
+EventStatus
+DRAFT
+
+
+PUBLISHED
+
+
+CANCELLED
+
+
+FINISHED
+UserRole
+
+(після Security)
+
+USER
+
+
+ORGANIZER
+
+
+ADMIN
+Relationships
+User
+User
+
+
+1 ------ * Booking
+
+
+1 ------ * Review
+
+
+1 ------ * Event
+Event
+Event
+
+
+* ------ 1 Category
+
+
+* ------ 1 Venue
+
+
+1 ------ * Booking
+
+
+1 ------ * Review
+Booking
+Booking
+
+
+* ------ 1 User
+
+
+* ------ 1 Event
+Review
+Review
+
+
+* ------ 1 User
+
+
+* ------ 1 Event
+Roadmap
+Блок 1
+Створення проекту
+структура пакетів;
+налаштування application.yml;
+підключення H2;
+підключення Flyway;
+перевірка запуску.
+Блок 2
+Entity Layer
+
+Навчимося правильно використовувати:
+
+@Entity
+@Table
+@Id
+@GeneratedValue
+@Column
+
+Створити:
+
+User
+Event
+Category
+Venue
+Booking
+Review
+Блок 3
+Relationships
+
+Правильно реалізувати:
+
+OneToMany
+ManyToOne
+OneToOne (якщо знадобиться)
+ManyToMany (можемо додати пізніше для тегів)
+
+Особливо розібрати:
+
+FetchType
+CascadeType
+mappedBy
+orphanRemoval
+Блок 4
+Repository Layer
+
+Для кожної сутності.
+
+Навчитись:
+
+findBy...
+
+
+existsBy...
+
+
+deleteBy...
+
+
+countBy...
+Блок 5
+Service Layer
+
+Створити інтерфейси.
+
+Наприклад
+
+UserService
+
+
+EventService
+
+
+BookingService
+
+
+VenueService
+
+
+CategoryService
+
+
+ReviewService
+
+Реалізація:
+
+UserServiceImpl
+
+
+EventServiceImpl
+
+
+...
+
+Правило:
+
+У Controller не повинно бути бізнес-логіки.
+
+Блок 6
+CRUD
+
+Для кожної сутності.
+
+Повний набір:
+
+Create
+
+
+Get By Id
+
+
+Get All
+
+
+Update
+
+
+Delete
+Блок 7
+DTO
+
+Окремі Request та Response.
+
+Наприклад:
+
+CreateEventRequest
+
+
+UpdateEventRequest
+
+
+EventResponse
+
+Аналогічно для всіх сутностей.
+
+Entity ніколи не виходить за межі Service.
+
+Блок 8
+Mapper
+
+Без MapStruct.
+
+Ручний mapper.
+
+Наприклад:
+
+EventMapper
+
+
+toEntity()
+
+
+toResponse()
+
+
+updateEntity()
+Блок 9
+Bean Validation
+
+Навчитись використовувати:
+
+@NotBlank
+@NotNull
+@Size
+@Positive
+@Email
+@Future
+@Min
+@Max
+@Pattern
+@Valid
+Блок 10
+Global Exception Handler
+
+Створити власні Exception:
+
+UserNotFoundException
+
+
+EventNotFoundException
+
+
+VenueNotFoundException
+
+
+BookingNotFoundException
+
+
+CategoryNotFoundException
+
+Потім:
+
+@ControllerAdvice
+
+
+@ExceptionHandler
+
+Єдиний формат помилок.
+
+Блок 11
+HTTP Response
+
+Правильне використання
+
+200 OK
+
+
+201 Created
+
+
+204 No Content
+
+
+400 Bad Request
+
+
+404 Not Found
+
+
+409 Conflict
+
+
+500 Internal Server Error
+Блок 12
+Flyway
+
+Повністю відмовляємось від
+
+ddl-auto=create
+
+Пишемо
+
+V1__create_users.sql
+
+
+V2__create_categories.sql
+
+
+V3__create_venues.sql
+
+
+...
+Блок 13
+Pagination
+
+Всі списки повинні підтримувати
+
+page
+
+
+size
+
+через Pageable.
+
+Блок 14
+Sorting
+sortBy
+
+
+direction
+Блок 15
+Search
+
+Пошук подій:
+
+по назві
+по категорії
+по місту
+по даті
+по організатору
+Блок 16
+Dynamic Search (Specification)
+
+Фільтрація за будь-якою комбінацією:
+
+category
+city
+minPrice
+maxPrice
+startDate
+status
+organizer
+Блок 17
+Transactions
+
+Навчитись правильно використовувати
+
+@Transactional
+Блок 18
+Логування
+@Slf4j
+
+Логувати:
+
+створення події;
+бронювання;
+скасування бронювання;
+помилки.
+Блок 19 (перша серйозна бізнес-логіка)
+Booking Service
+
+Тут уже не просто CRUD.
+
+Потрібно реалізувати:
+
+бронювання квитків;
+перевірку кількості місць;
+автоматичне зменшення availableSeats;
+скасування бронювання;
+повернення місць після скасування.
+
+Саме тут починається "живий" бекенд.
+
+Блок 20
+Reviews
+
+Обмеження:
+
+лише користувач, який має підтверджене бронювання, може залишити відгук;
+один користувач — один відгук на одну подію;
+рейтинг від 1 до 5.
+Блок 21
+Security
+
+Додаємо:
+
+Spring Security
+JWT
+BCrypt
+
+Навчимося:
+
+UserDetails
+UserDetailsService
+AuthenticationManager
+SecurityFilterChain
+JWT Filter
+Блок 22
+Authentication
+
+Реалізуємо:
+
+Register
+Login
+JWT Token
+Refresh Token (за бажанням)
+Блок 23
+Authorization
+
+Ролі:
+
+USER
+перегляд подій;
+бронювання;
+скасування своїх бронювань;
+відгуки.
+ORGANIZER
+
+Усе, що USER, плюс:
+
+створення подій;
+редагування своїх подій;
+перегляд списку бронювань на свої події.
+ADMIN
+
+Повний доступ.
+
+Блок 24
+Swagger
+
+Документуємо API.
+
+Блок 25
+PostgreSQL
+
+Замінюємо H2 без зміни бізнес-логіки.
+
+Блок 26
+Docker
+Dockerfile
+docker-compose
+PostgreSQL Container
+Блок 27
+Testing
+JUnit 5
+Mockito
+Integration Tests
+DataJpaTest
+WebMvcTest
+Додаткові фічі (рівень Middle)
+
+Після завершення основного функціоналу можна додати те, що часто зустрічається у production:
+
+Auditing (@CreatedDate, @LastModifiedDate, @CreatedBy)
+Soft Delete для подій або користувачів
+Єдиний формат відповіді API (ApiResponse<T>)
+Глобальні коди помилок (ErrorCode enum)
+Кастомні Bean Validators (наприклад, перевірка, що дата завершення не раніше дати початку)
+EntityGraph для оптимізації запитів
+Profiles (dev, test, prod)
+Caching (наприклад, для списку категорій)
+Rate Limiting для API авторизації
+Testcontainers для інтеграційних тестів із PostgreSQL
