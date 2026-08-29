@@ -123,4 +123,19 @@ public class EventServiceImpl implements EventService {
                         )
                 );
     }
+
+    @Override
+    public EventResponse publishEvent(Long eventId){
+        return null;
+    }
+
+    @Override
+    public EventResponse cancelEvent(Long eventId){
+        return null;
+    }
+
+    @Override
+    public EventResponse finishEvent(Long eventId){
+        return null;
+    }
 }

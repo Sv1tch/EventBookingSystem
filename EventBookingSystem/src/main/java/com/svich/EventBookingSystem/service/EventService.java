@@ -12,4 +12,8 @@ public interface EventService {
     EventResponse findById(Long eventId);
     EventResponse updateById(Long eventId, UpdateEventRequest request);
     void deleteById(Long eventId);
+
+    EventResponse publishEvent(Long eventId);
+    EventResponse cancelEvent(Long eventId);
+    EventResponse finishEvent(Long eventId);
 }
