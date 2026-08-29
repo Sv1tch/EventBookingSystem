@@ -4,6 +4,7 @@ package com.svich.EventBookingSystem.mapper.category;
 import com.svich.EventBookingSystem.dto.category.response.CategoryResponse;
 import com.svich.EventBookingSystem.dto.category.request.CreateCategoryRequest;
 import com.svich.EventBookingSystem.dto.category.request.UpdateCategoryRequest;
+import com.svich.EventBookingSystem.dto.category.response.CategorySummaryResponse;
 import com.svich.EventBookingSystem.entity.category.Category;
 import org.springframework.stereotype.Component;
 
@@ -25,6 +26,15 @@ public class CategoryMapper {
         response.setId(category.getId());
         response.setName(category.getName());
         response.setDescription(category.getDescription());
+
+        return response;
+    }
+
+    public CategorySummaryResponse toSummaryResponse(Category category){
+        CategorySummaryResponse response = new CategorySummaryResponse();
+
+        response.setId(category.getId());
+        response.setName(category.getName());
 
         return response;
     }

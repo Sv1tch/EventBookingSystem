@@ -3,6 +3,7 @@ package com.svich.EventBookingSystem.mapper.venue;
 import com.svich.EventBookingSystem.dto.venue.request.CreateVenueRequest;
 import com.svich.EventBookingSystem.dto.venue.request.UpdateVenueRequest;
 import com.svich.EventBookingSystem.dto.venue.response.VenueResponse;
+import com.svich.EventBookingSystem.dto.venue.response.VenueSummaryResponse;
 import com.svich.EventBookingSystem.entity.venue.Venue;
 import org.springframework.stereotype.Component;
 
@@ -28,6 +29,16 @@ public class VenueMapper {
         response.setCity(venue.getCity());
         response.setAddress(venue.getAddress());
         response.setCapacity(venue.getCapacity());
+
+        return response;
+    }
+
+    public VenueSummaryResponse toSummaryResponse(Venue venue){
+        VenueSummaryResponse response = new VenueSummaryResponse();
+
+        response.setId(venue.getId());
+        response.setName(venue.getName());
+        response.setCity(venue.getCity());
 
         return response;
     }
