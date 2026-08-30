@@ -51,4 +51,25 @@ public class EventController {
     public void deleteById(@PathVariable Long eventId){
         eventService.deleteById(eventId);
     }
+
+    @PostMapping("/{eventId}/publish")
+    public ResponseEntity<EventResponse> publishEvent(@PathVariable Long eventId){
+        EventResponse event = eventService.publishEvent(eventId);
+
+        return new ResponseEntity<>(event, HttpStatus.OK);
+    }
+
+    @PostMapping("/{eventId}/cancel")
+    public ResponseEntity<EventResponse> cancelEvent(@PathVariable Long eventId){
+        EventResponse event = eventService.cancelEvent(eventId);
+
+        return new ResponseEntity<>(event, HttpStatus.OK);
+    }
+
+    @PostMapping("/{eventId}/finish")
+    public ResponseEntity<EventResponse> finishEvent(@PathVariable Long eventId){
+        EventResponse event = eventService.finishEvent(eventId);
+
+        return new ResponseEntity<>(event, HttpStatus.OK);
+    }
 }

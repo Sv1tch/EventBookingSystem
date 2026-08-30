@@ -1,5 +1,8 @@
 GET http://localhost:8080/api/categories
-
+###
+GET http://localhost:8080/api/venues
+###
+GET http://localhost:8080/api/events
 ###
 
 POST http://localhost:8080/api/categories
@@ -12,12 +15,14 @@ Content-Type: application/json
 
 ###
 
-POST http://localhost:8080/api/categories
+POST http://localhost:8080/api/venues
 Content-Type: application/json
 
 {
-  "name": "Phones",
-  "description": "Phones category of products"
+  "name": "Arena Lviv",
+  "address": "Stryiska 199",
+  "city": "Lviv",
+  "capacity": 5000
 }
 
 ###
@@ -33,3 +38,23 @@ Content-Type: application/json
   "name": "phones2",
   "description": "no more desc"
 }
+
+###
+
+POST http://localhost:8080/api/events
+Content-Type: application/json
+
+{
+  "title": "Atlass WEEK",
+  "description": "fwefef",
+  "startDateTime": "2027-07-19T10:00:00",
+  "endDateTime": "2027-07-19T13:00:00",
+  "price": 49.99,
+  "capacity": 100,
+  "categoryId": 1,
+  "venueId": 1
+}
+
+###
+
+POST http://localhost:8080/api/events/1/publish

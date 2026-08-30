@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 
 @Getter
 @Setter
-public class UpdateEventRequest {
+public class UpdateEventRequest implements EventDateRequest{
 
     @NotBlank(message = "Title can't be blank")
     @Size(

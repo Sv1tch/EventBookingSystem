@@ -6,6 +6,7 @@ import com.svich.EventBookingSystem.dto.event.response.EventResponse;
 import com.svich.EventBookingSystem.entity.category.Category;
 import com.svich.EventBookingSystem.entity.event.Event;
 import com.svich.EventBookingSystem.entity.venue.Venue;
+import com.svich.EventBookingSystem.exception.InvalidEventStatusTransitionException;
 import com.svich.EventBookingSystem.exception.category.CategoryNotFoundException;
 import com.svich.EventBookingSystem.exception.event.EventNotFoundException;
 import com.svich.EventBookingSystem.exception.venue.VenueNotFoundException;
@@ -16,6 +17,7 @@ import com.svich.EventBookingSystem.repository.category.CategoryRepository;
 import com.svich.EventBookingSystem.repository.event.EventRepository;
 import com.svich.EventBookingSystem.repository.venue.VenueRepository;
 import com.svich.EventBookingSystem.service.EventService;
+import com.svich.EventBookingSystem.staticData.EventStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -39,6 +41,8 @@ public class EventServiceImpl implements EventService {
         Venue venue = findVenueById(request.getVenueId());
 
         Event event = eventMapper.toEntity(request, category, venue);
+
+        event.setStatus(EventStatus.DRAFT);
 
         Event savedEvent = eventRepository.save(event);
 
@@ -124,18 +128,53 @@ public class EventServiceImpl implements EventService {
                 );
     }
 
+    private EventResponse changeStatus(Event event, EventStatus targetStatus){
+        EventStatus currentStatus = event.getStatus();
+        boolean canTransit = false;
+
+        if(targetStatus.equals(EventStatus.PUBLISHED)){
+            canTransit = currentStatus.equals(EventStatus.DRAFT);
+        }
+        else if(targetStatus.equals(EventStatus.CANCELLED)) {
+            canTransit = (currentStatus.equals(EventStatus.DRAFT) || currentStatus.equals(EventStatus.PUBLISHED));
+        }
+        else if(targetStatus.equals(EventStatus.COMPLETED)){
+            canTransit = currentStatus.equals(EventStatus.PUBLISHED);
+        }
+
+        if(canTransit){
+            event.setStatus(targetStatus);
+
+            Event savedEvent = eventRepository.save(event);
+
+            return eventMapper.toResponse(
+                    savedEvent,
+                    categoryMapper.toSummaryResponse(savedEvent.getCategory()),
+                    venueMapper.toSummaryResponse(savedEvent.getVenue())
+            );
+        }
+
+        throw new InvalidEventStatusTransitionException("Event with id " + event.getId() + " cannot be changed from " + currentStatus + " to " + targetStatus);
+    }
+
     @Override
     public EventResponse publishEvent(Long eventId){
-        return null;
+        Event event = findEventById(eventId);
+
+        return changeStatus(event, EventStatus.PUBLISHED);
     }
 
     @Override
     public EventResponse cancelEvent(Long eventId){
-        return null;
+        Event event = findEventById(eventId);
+
+        return changeStatus(event, EventStatus.CANCELLED);
     }
 
     @Override
     public EventResponse finishEvent(Long eventId){
-        return null;
+        Event event = findEventById(eventId);
+
+        return changeStatus(event, EventStatus.COMPLETED);
     }
 }

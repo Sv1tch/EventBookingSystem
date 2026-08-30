@@ -1,6 +1,6 @@
 package com.svich.EventBookingSystem.dto.event.request;
 
-import com.svich.EventBookingSystem.staticData.EventStatus;
+import com.svich.EventBookingSystem.dto.event.validation.ValidEventDates;
 import jakarta.validation.constraints.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -10,7 +10,8 @@ import java.time.LocalDateTime;
 
 @Getter
 @Setter
-public class CreateEventRequest {
+@ValidEventDates
+public class CreateEventRequest implements EventDateRequest {
 
     @NotBlank(message = "Title can't be blank")
     @Size(
