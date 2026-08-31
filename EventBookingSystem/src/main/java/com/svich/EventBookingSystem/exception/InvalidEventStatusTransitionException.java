@@ -1,7 +1,9 @@
 package com.svich.EventBookingSystem.exception;
 
-public class InvalidEventStatusTransitionException extends RuntimeException {
+import org.springframework.http.HttpStatus;
+
+public class InvalidEventStatusTransitionException extends ApiException {
     public InvalidEventStatusTransitionException(String message) {
-        super(message);
+        super(message, HttpStatus.CONFLICT);
     }
 }

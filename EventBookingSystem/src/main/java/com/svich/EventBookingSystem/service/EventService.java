@@ -3,12 +3,12 @@ package com.svich.EventBookingSystem.service;
 import com.svich.EventBookingSystem.dto.event.request.CreateEventRequest;
 import com.svich.EventBookingSystem.dto.event.request.UpdateEventRequest;
 import com.svich.EventBookingSystem.dto.event.response.EventResponse;
-
-import java.util.List;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Page;
 
 public interface EventService {
     EventResponse create(CreateEventRequest request);
-    List<EventResponse> findAll();
+    Page<EventResponse> findAll(Pageable pageable);
     EventResponse findById(Long eventId);
     EventResponse updateById(Long eventId, UpdateEventRequest request);
     void deleteById(Long eventId);

@@ -19,6 +19,9 @@ import com.svich.EventBookingSystem.repository.venue.VenueRepository;
 import com.svich.EventBookingSystem.service.EventService;
 import com.svich.EventBookingSystem.staticData.EventStatus;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -54,16 +57,15 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public List<EventResponse> findAll() {
-        List<Event> events = eventRepository.findAll();
+    public Page<EventResponse> findAll(Pageable pageable) {
+        Page<Event> events = eventRepository.findAll(pageable);
 
-        return events.stream()
-                .map(event -> eventMapper.toResponse(
+        return events.map(event ->
+                eventMapper.toResponse(
                         event,
                         categoryMapper.toSummaryResponse(event.getCategory()),
                         venueMapper.toSummaryResponse(event.getVenue())
-                ))
-                .toList();
+                ));
     }
 
     @Override

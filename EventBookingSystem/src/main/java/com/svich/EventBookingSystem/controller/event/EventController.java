@@ -3,20 +3,24 @@ package com.svich.EventBookingSystem.controller.event;
 import com.svich.EventBookingSystem.dto.event.request.CreateEventRequest;
 import com.svich.EventBookingSystem.dto.event.request.UpdateEventRequest;
 import com.svich.EventBookingSystem.dto.event.response.EventResponse;
+import com.svich.EventBookingSystem.pagination.PageableFactory;
 import com.svich.EventBookingSystem.service.EventService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+
 
 @RestController
 @RequestMapping("/api/events")
 @RequiredArgsConstructor
 public class EventController {
     private final EventService eventService;
+    private final PageableFactory factory;
 
     @PostMapping("")
     public ResponseEntity<EventResponse> create(@Valid @RequestBody CreateEventRequest request){
@@ -26,8 +30,16 @@ public class EventController {
     }
 
     @GetMapping("")
-    public ResponseEntity<List<EventResponse>> findAll(){
-        List<EventResponse> events = eventService.findAll();
+    public ResponseEntity<Page<EventResponse>> findAll(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "title") String sortBy,
+            @RequestParam(defaultValue = "asc") String direction
+            ){
+
+        Pageable pageable = factory.create(page, size, sortBy, direction);
+
+        Page<EventResponse> events = eventService.findAll(pageable);
 
         return new ResponseEntity<>(events, HttpStatus.OK);
     }
