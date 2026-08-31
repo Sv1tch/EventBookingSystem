@@ -5,6 +5,7 @@ import com.svich.EventBookingSystem.dto.event.request.UpdateEventRequest;
 import com.svich.EventBookingSystem.dto.event.response.EventResponse;
 import com.svich.EventBookingSystem.pagination.PageableFactory;
 import com.svich.EventBookingSystem.service.EventService;
+import com.svich.EventBookingSystem.staticData.EventStatus;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -34,12 +35,16 @@ public class EventController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "title") String sortBy,
-            @RequestParam(defaultValue = "asc") String direction
+            @RequestParam(defaultValue = "asc") String direction,
+            @RequestParam(required = false) String title,
+            @RequestParam(required = false) EventStatus status
             ){
 
         Pageable pageable = factory.create(page, size, sortBy, direction);
 
-        Page<EventResponse> events = eventService.findAll(pageable);
+        Page<EventResponse> events = (title == null || title.isBlank())
+                ? eventService.findAll(pageable)
+                : eventService.findByTitle(title, pageable);
 
         return new ResponseEntity<>(events, HttpStatus.OK);
     }
@@ -79,8 +84,8 @@ public class EventController {
     }
 
     @PostMapping("/{eventId}/finish")
-    public ResponseEntity<EventResponse> finishEvent(@PathVariable Long eventId){
-        EventResponse event = eventService.finishEvent(eventId);
+    public ResponseEntity<EventResponse> completeEvent(@PathVariable Long eventId){
+        EventResponse event = eventService.completeEvent(eventId);
 
         return new ResponseEntity<>(event, HttpStatus.OK);
     }

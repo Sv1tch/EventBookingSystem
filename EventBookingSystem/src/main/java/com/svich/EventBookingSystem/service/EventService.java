@@ -3,6 +3,7 @@ package com.svich.EventBookingSystem.service;
 import com.svich.EventBookingSystem.dto.event.request.CreateEventRequest;
 import com.svich.EventBookingSystem.dto.event.request.UpdateEventRequest;
 import com.svich.EventBookingSystem.dto.event.response.EventResponse;
+import com.svich.EventBookingSystem.staticData.EventStatus;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Page;
 
@@ -15,5 +16,8 @@ public interface EventService {
 
     EventResponse publishEvent(Long eventId);
     EventResponse cancelEvent(Long eventId);
-    EventResponse finishEvent(Long eventId);
+    EventResponse completeEvent(Long eventId);
+
+    Page<EventResponse> findByTitle(String title, Pageable pageable);
+    Page<EventResponse> findByStatus(EventStatus status, Pageable pageable);
 }

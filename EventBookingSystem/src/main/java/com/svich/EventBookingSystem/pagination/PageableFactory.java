@@ -15,7 +15,8 @@ public class PageableFactory {
             "price",
             "startDateTime",
             "endDateTime",
-            "capacity"
+            "capacity",
+            "status"
     );
 
     public Pageable create(int page, int size, String sortBy, String direction){

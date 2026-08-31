@@ -20,11 +20,8 @@ import com.svich.EventBookingSystem.service.EventService;
 import com.svich.EventBookingSystem.staticData.EventStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -159,6 +156,7 @@ public class EventServiceImpl implements EventService {
         throw new InvalidEventStatusTransitionException("Event with id " + event.getId() + " cannot be changed from " + currentStatus + " to " + targetStatus);
     }
 
+    // STATUS CHANGING
     @Override
     public EventResponse publishEvent(Long eventId){
         Event event = findEventById(eventId);
@@ -174,9 +172,26 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public EventResponse finishEvent(Long eventId){
+    public EventResponse completeEvent(Long eventId){
         Event event = findEventById(eventId);
 
         return changeStatus(event, EventStatus.COMPLETED);
+    }
+
+    // SEARCH FUTURES
+    @Override
+    public Page<EventResponse> findByTitle(String title, Pageable pageable){
+        Page<Event> events = eventRepository.findByTitleContainingIgnoreCase(title, pageable);
+
+        return events.map(event ->
+                eventMapper.toResponse(event, categoryMapper.toSummaryResponse(event.getCategory()), venueMapper.toSummaryResponse(event.getVenue())));
+    }
+
+    @Override
+    public Page<EventResponse> findByStatus(EventStatus status, Pageable pageable){
+        Page<Event> events = eventRepository.findByStatus(status, pageable);
+
+        return events.map(event ->
+                eventMapper.toResponse(event, categoryMapper.toSummaryResponse(event.getCategory()), venueMapper.toSummaryResponse(event.getVenue())));
     }
 }

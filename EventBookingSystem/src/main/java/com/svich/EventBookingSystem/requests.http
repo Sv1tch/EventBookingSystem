@@ -1,69 +1,154 @@
-GET http://localhost:8080/api/categories
-###
-GET http://localhost:8080/api/venues
-###
-GET http://localhost:8080/api/events
-###
-
+### CREATE CATEGORY 1
 POST http://localhost:8080/api/categories
 Content-Type: application/json
 
 {
-  "name": "Clothes",
-  "description": "Clothes category of products"
+  "name": "Music"
 }
 
-###
+### CREATE CATEGORY 2
+POST http://localhost:8080/api/categories
+Content-Type: application/json
 
+{
+  "name": "Sport"
+}
+
+### CREATE CATEGORY 3
+POST http://localhost:8080/api/categories
+Content-Type: application/json
+
+{
+  "name": "Technology"
+}
+
+### CREATE VENUE 1
 POST http://localhost:8080/api/venues
 Content-Type: application/json
 
 {
-  "name": "Arena Lviv",
-  "address": "Stryiska 199",
-  "city": "Lviv",
-  "capacity": 5000
+  "name": "Atlas Arena",
+  "city": "Lublin",
+  "address": "Aleje Raclawickie 10",
+  "capacity": 10000
 }
 
-###
-
-DELETE http://localhost:8080/api/categories/1
-
-###
-
-PUT http://localhost:8080/api/categories/2
+### CREATE VENUE 2
+POST http://localhost:8080/api/venues
 Content-Type: application/json
 
 {
-  "name": "phones2",
-  "description": "no more desc"
+  "name": "City stadium",
+  "city": "Lublin",
+  "address": "Sportowa 15",
+  "capacity": 5000
 }
 
-###
+### CREATE VENUE 3
+POST http://localhost:8080/api/venues
+Content-Type: application/json
 
+{
+  "name": "Tech Center",
+  "city": "Lublin",
+  "address": "Technology 25",
+  "capacity": 2000
+}
+
+### CREATE EVENT 1
 POST http://localhost:8080/api/events
 Content-Type: application/json
 
 {
-  "title": "Champions League",
-  "description": "fegre",
-  "startDateTime": "2027-07-19T10:00:00",
-  "endDateTime": "2027-07-19T13:00:00",
-  "price": 90.00,
+  "title": "Atlas Music Festival",
+  "description": "Music festival",
+  "startDateTime": "2027-06-10T18:00:00",
+  "endDateTime": "2027-06-10T23:00:00",
+  "price": 49.99,
+  "capacity": 500,
+  "categoryId": 1,
+  "venueId": 1
+}
+
+### CREATE EVENT 2
+POST http://localhost:8080/api/events
+Content-Type: application/json
+
+{
+  "title": "Football Championship",
+  "description": "Local football championship",
+  "startDateTime": "2027-07-15T15:00:00",
+  "endDateTime": "2027-07-15T17:00:00",
+  "price": 20.00,
+  "capacity": 2000,
+  "categoryId": 2,
+  "venueId": 2
+}
+
+### CREATE EVENT 3
+POST http://localhost:8080/api/events
+Content-Type: application/json
+
+{
+  "title": "Java Conference",
+  "description": "Spring Boot and Java conference",
+  "startDateTime": "2027-08-20T10:00:00",
+  "endDateTime": "2027-08-20T16:00:00",
+  "price": 100.00,
+  "capacity": 200,
+  "categoryId": 3,
+  "venueId": 3
+}
+
+### Event 4
+POST http://localhost:8080/api/events
+Content-Type: application/json
+
+{
+  "title": "Music Workshop",
+  "description": "Practical music workshop",
+  "startDateTime": "2027-09-05T12:00:00",
+  "endDateTime": "2027-09-05T16:00:00",
+  "price": 20.00,
+  "capacity": 50,
+  "categoryId": 1,
+  "venueId": 1
+}
+
+
+### Event 5
+POST http://localhost:8080/api/events
+Content-Type: application/json
+
+{
+  "title": "Tech Meetup",
+  "description": "Technology community meetup",
+  "startDateTime": "2027-10-10T18:00:00",
+  "endDateTime": "2027-10-10T21:00:00",
+  "price": 0.00,
   "capacity": 100,
+  "categoryId": 3,
+  "venueId": 3
+}
+
+
+### Event 6
+POST http://localhost:8080/api/events
+Content-Type: application/json
+
+{
+  "title": "Summer Music Night",
+  "description": "Live music event",
+  "startDateTime": "2027-11-01T19:00:00",
+  "endDateTime": "2027-11-01T23:00:00",
+  "price": 75.50,
+  "capacity": 700,
   "categoryId": 1,
   "venueId": 1
 }
 
 ###
-
-POST http://localhost:8080/api/events/1/publish
-
-###
-GET http://localhost:8080/api/events?page=0&size=2
+GET http://localhost:8080/api/events?title=ball
 
 ###
-GET http://localhost:8080/api/events?sortBy=price&direction=asc
-
-###
-GET http://localhost:8080/api/events?sortBy=banana&direction=asc
+POST http://localhost:8080/api/events/1/cancel
