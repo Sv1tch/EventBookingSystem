@@ -7,9 +7,10 @@ import com.svich.EventBookingSystem.staticData.EventStatus;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Page;
 
+import java.time.LocalDateTime;
+
 public interface EventService {
     EventResponse create(CreateEventRequest request);
-    Page<EventResponse> findAll(Pageable pageable);
     EventResponse findById(Long eventId);
     EventResponse updateById(Long eventId, UpdateEventRequest request);
     void deleteById(Long eventId);
@@ -18,6 +19,11 @@ public interface EventService {
     EventResponse cancelEvent(Long eventId);
     EventResponse completeEvent(Long eventId);
 
-    Page<EventResponse> findByTitle(String title, Pageable pageable);
-    Page<EventResponse> findByStatus(EventStatus status, Pageable pageable);
+    Page<EventResponse> findEvents(
+            String title,
+            EventStatus status,
+            LocalDateTime startDateTime,
+            LocalDateTime endDateTime,
+            Pageable pageable
+    );
 }

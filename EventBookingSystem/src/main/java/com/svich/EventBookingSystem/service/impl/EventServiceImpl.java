@@ -23,6 +23,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+
 @Service
 @RequiredArgsConstructor
 public class EventServiceImpl implements EventService {
@@ -53,16 +55,8 @@ public class EventServiceImpl implements EventService {
         );
     }
 
-    @Override
-    public Page<EventResponse> findAll(Pageable pageable) {
-        Page<Event> events = eventRepository.findAll(pageable);
-
-        return events.map(event ->
-                eventMapper.toResponse(
-                        event,
-                        categoryMapper.toSummaryResponse(event.getCategory()),
-                        venueMapper.toSummaryResponse(event.getVenue())
-                ));
+    private Page<Event> findAll(Pageable pageable) {
+        return eventRepository.findAll(pageable);
     }
 
     @Override
@@ -180,18 +174,47 @@ public class EventServiceImpl implements EventService {
 
     // SEARCH FUTURES
     @Override
-    public Page<EventResponse> findByTitle(String title, Pageable pageable){
-        Page<Event> events = eventRepository.findByTitleContainingIgnoreCase(title, pageable);
+    public Page<EventResponse> findEvents(
+            String title,
+            EventStatus status,
+            LocalDateTime startDateTime,
+            LocalDateTime endDateTime,
+            Pageable pageable
+    ){
+        Page<Event> events = (title == null || title.isBlank())
+                ? (status == null
+                    ? findAll(pageable)
+                    : findByStatus(status, pageable)
+                    )
+                : (status != null
+                    ? findByTitleAndStatus(title, status, pageable)
+                    : findByTitle(title, pageable));
 
         return events.map(event ->
                 eventMapper.toResponse(event, categoryMapper.toSummaryResponse(event.getCategory()), venueMapper.toSummaryResponse(event.getVenue())));
     }
 
-    @Override
-    public Page<EventResponse> findByStatus(EventStatus status, Pageable pageable){
-        Page<Event> events = eventRepository.findByStatus(status, pageable);
+    private Page<Event> findByTitle(String title, Pageable pageable){
+        return eventRepository.findByTitleContainingIgnoreCase(title, pageable);
+    }
 
-        return events.map(event ->
-                eventMapper.toResponse(event, categoryMapper.toSummaryResponse(event.getCategory()), venueMapper.toSummaryResponse(event.getVenue())));
+    private Page<Event> findByStatus(EventStatus status, Pageable pageable){
+        return eventRepository.findByStatus(status, pageable);
+    }
+
+    private Page<Event> findByTitleAndStatus(String title, EventStatus status, Pageable pageable){
+        return eventRepository.findByTitleContainingIgnoreCaseAndStatus(title, status, pageable);
+    }
+
+    private Page<Event> findByStartDateTimeAfter(LocalDateTime startDateTime, Pageable pageable){
+        return eventRepository.findByStartDateTimeAfter(startDateTime, pageable);
+    }
+
+    private Page<Event> findByEndDateTimeBefore(LocalDateTime endDateTime, Pageable pageable){
+        return eventRepository.findByEndDateTimeBefore(endDateTime, pageable);
+    }
+
+    private Page<Event> findByStartDateTimeAndEndDateTimeBetween(LocalDateTime startDateTime, LocalDateTime endDateTime, Pageable pageable){
+        return eventRepository.findByStartDateTimeAndEndDateTimeBetween(startDateTime, endDateTime, pageable);
     }
 }

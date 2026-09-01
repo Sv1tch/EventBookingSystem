@@ -152,3 +152,6 @@ GET http://localhost:8080/api/events?title=ball
 
 ###
 POST http://localhost:8080/api/events/1/cancel
+
+###
+GET http://localhost:8080/api/events?title=music&sortBy=price&page=0&size=2&direction=desc

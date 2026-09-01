@@ -14,6 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 
 
 @RestController
@@ -37,14 +38,14 @@ public class EventController {
             @RequestParam(defaultValue = "title") String sortBy,
             @RequestParam(defaultValue = "asc") String direction,
             @RequestParam(required = false) String title,
-            @RequestParam(required = false) EventStatus status
+            @RequestParam(required = false) EventStatus status,
+            @RequestParam(required = false) LocalDateTime startDateTime,
+            @RequestParam(required = false) LocalDateTime endDateTime
             ){
 
         Pageable pageable = factory.create(page, size, sortBy, direction);
 
-        Page<EventResponse> events = (title == null || title.isBlank())
-                ? eventService.findAll(pageable)
-                : eventService.findByTitle(title, pageable);
+        Page<EventResponse> events = eventService.findEvents(title, status, startDateTime, endDateTime, pageable);
 
         return new ResponseEntity<>(events, HttpStatus.OK);
     }
