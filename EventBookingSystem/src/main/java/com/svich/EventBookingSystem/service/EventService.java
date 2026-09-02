@@ -24,6 +24,8 @@ public interface EventService {
             EventStatus status,
             LocalDateTime startDateTime,
             LocalDateTime endDateTime,
+            Long categoryId,
+            Long venueId,
             Pageable pageable
     );
 }

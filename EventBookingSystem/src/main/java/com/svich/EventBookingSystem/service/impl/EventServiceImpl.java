@@ -15,12 +15,14 @@ import com.svich.EventBookingSystem.mapper.event.EventMapper;
 import com.svich.EventBookingSystem.mapper.venue.VenueMapper;
 import com.svich.EventBookingSystem.repository.category.CategoryRepository;
 import com.svich.EventBookingSystem.repository.event.EventRepository;
+import com.svich.EventBookingSystem.repository.event.EventSpecification;
 import com.svich.EventBookingSystem.repository.venue.VenueRepository;
 import com.svich.EventBookingSystem.service.EventService;
 import com.svich.EventBookingSystem.staticData.EventStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -53,10 +55,6 @@ public class EventServiceImpl implements EventService {
                 categoryMapper.toSummaryResponse(savedEvent.getCategory()),
                 venueMapper.toSummaryResponse(savedEvent.getVenue())
         );
-    }
-
-    private Page<Event> findAll(Pageable pageable) {
-        return eventRepository.findAll(pageable);
     }
 
     @Override
@@ -179,42 +177,39 @@ public class EventServiceImpl implements EventService {
             EventStatus status,
             LocalDateTime startDateTime,
             LocalDateTime endDateTime,
+            Long categoryId,
+            Long venueId,
             Pageable pageable
     ){
-        Page<Event> events = (title == null || title.isBlank())
-                ? (status == null
-                    ? findAll(pageable)
-                    : findByStatus(status, pageable)
-                    )
-                : (status != null
-                    ? findByTitleAndStatus(title, status, pageable)
-                    : findByTitle(title, pageable));
+        Specification<Event> spec = (root, query, criteriaBuilder) -> null;
+
+        if(title != null && !title.isBlank()){
+            spec = spec.and(EventSpecification.hasTitle(title));
+        }
+
+        if(status != null){
+            spec = spec.and(EventSpecification.hasStatus(status));
+        }
+
+        if(startDateTime != null){
+            spec = spec.and(EventSpecification.startsFrom(startDateTime));
+        }
+
+        if(endDateTime != null){
+            spec = spec.and(EventSpecification.endsBefore(endDateTime));
+        }
+
+        if(categoryId != null){
+            spec = spec.and(EventSpecification.hasCategory(categoryId));
+        }
+
+        if(venueId != null){
+            spec = spec.and(EventSpecification.hasVenue(venueId));
+        }
+
+        Page<Event> events = eventRepository.findAll(spec, pageable);
 
         return events.map(event ->
                 eventMapper.toResponse(event, categoryMapper.toSummaryResponse(event.getCategory()), venueMapper.toSummaryResponse(event.getVenue())));
-    }
-
-    private Page<Event> findByTitle(String title, Pageable pageable){
-        return eventRepository.findByTitleContainingIgnoreCase(title, pageable);
-    }
-
-    private Page<Event> findByStatus(EventStatus status, Pageable pageable){
-        return eventRepository.findByStatus(status, pageable);
-    }
-
-    private Page<Event> findByTitleAndStatus(String title, EventStatus status, Pageable pageable){
-        return eventRepository.findByTitleContainingIgnoreCaseAndStatus(title, status, pageable);
-    }
-
-    private Page<Event> findByStartDateTimeAfter(LocalDateTime startDateTime, Pageable pageable){
-        return eventRepository.findByStartDateTimeAfter(startDateTime, pageable);
-    }
-
-    private Page<Event> findByEndDateTimeBefore(LocalDateTime endDateTime, Pageable pageable){
-        return eventRepository.findByEndDateTimeBefore(endDateTime, pageable);
-    }
-
-    private Page<Event> findByStartDateTimeAndEndDateTimeBetween(LocalDateTime startDateTime, LocalDateTime endDateTime, Pageable pageable){
-        return eventRepository.findByStartDateTimeAndEndDateTimeBetween(startDateTime, endDateTime, pageable);
     }
 }

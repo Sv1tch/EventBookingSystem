@@ -148,10 +148,10 @@ Content-Type: application/json
 }
 
 ###
-GET http://localhost:8080/api/events?title=ball
+GET http://localhost:8080/api/events?title=music&status=PUBLISHED&startDateTime=2026-09-10T23:00:00&endDateTime=2027-08-15T11:00:00
 
 ###
-POST http://localhost:8080/api/events/1/cancel
+POST http://localhost:8080/api/events/4/publish
 
 ###
 GET http://localhost:8080/api/events?title=music&sortBy=price&page=0&size=2&direction=desc
