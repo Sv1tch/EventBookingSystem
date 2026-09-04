@@ -13,7 +13,7 @@ public class VenueMapperTest {
 
     private final VenueMapper venueMapper = new VenueMapper();
 
-    // AAA Pattern
+     // AAA Pattern
     @Test
     void shouldMapCreateRequestToEntity(){
 
