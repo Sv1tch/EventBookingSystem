@@ -12,6 +12,7 @@ import com.svich.EventBookingSystem.service.CustomerService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -29,6 +30,9 @@ public class CustomerServiceImpl implements CustomerService {
 
         Customer customer = customerMapper.toEntity(request);
 
+        customer.setCreatedAt(LocalDateTime.now());
+        customer.setUpdatedAt(LocalDateTime.now());
+
         Customer savedCustomer = customerRepository.save(customer);
 
         return customerMapper.toResponse(savedCustomer);
@@ -41,12 +45,25 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     public List<CustomerResponse> findAll(){
-        return null;
+        List<Customer> customers = customerRepository.findAll();
+
+        return customers.stream().map(customerMapper::toResponse).toList();
     }
 
     @Override
     public CustomerResponse updateById(Long customerId, UpdateCustomerRequest request){
-        return null;
+        Customer customer = findCustomerById(customerId);
+
+        if(!customer.getEmail().equals(request.getEmail()) && customerRepository.existsByEmail(request.getEmail())){
+            throw new CustomerAlreadyExistsException("Customer with email " + request.getEmail() + " already exists");
+        }
+
+        customerMapper.updateEntity(request, customer);
+        customer.setUpdatedAt(LocalDateTime.now());
+
+        Customer savedCustomer = customerRepository.save(customer);
+
+        return customerMapper.toResponse(savedCustomer);
     }
 
     @Override

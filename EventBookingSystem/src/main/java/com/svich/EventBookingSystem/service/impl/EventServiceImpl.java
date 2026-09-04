@@ -119,6 +119,7 @@ public class EventServiceImpl implements EventService {
                 );
     }
 
+    // STATUS CHANGING
     private EventResponse changeStatus(Event event, EventStatus targetStatus){
         EventStatus currentStatus = event.getStatus();
         boolean canTransit = false;
@@ -148,7 +149,6 @@ public class EventServiceImpl implements EventService {
         throw new InvalidEventStatusTransitionException("Event with id " + event.getId() + " cannot be changed from " + currentStatus + " to " + targetStatus);
     }
 
-    // STATUS CHANGING
     @Override
     public EventResponse publishEvent(Long eventId){
         Event event = findEventById(eventId);
