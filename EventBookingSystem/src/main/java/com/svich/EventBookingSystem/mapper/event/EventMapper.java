@@ -4,6 +4,7 @@ import com.svich.EventBookingSystem.dto.category.response.CategorySummaryRespons
 import com.svich.EventBookingSystem.dto.event.request.CreateEventRequest;
 import com.svich.EventBookingSystem.dto.event.request.UpdateEventRequest;
 import com.svich.EventBookingSystem.dto.event.response.EventResponse;
+import com.svich.EventBookingSystem.dto.event.response.EventSummaryResponse;
 import com.svich.EventBookingSystem.dto.venue.response.VenueSummaryResponse;
 import com.svich.EventBookingSystem.entity.category.Category;
 import com.svich.EventBookingSystem.entity.event.Event;
@@ -49,6 +50,17 @@ public class EventMapper {
         response.setStatus(event.getStatus());
         response.setCategory(categorySummaryResponse);
         response.setVenue(venueSummaryResponse);
+
+        return response;
+    }
+
+    public EventSummaryResponse toSummaryResponse(Event event){
+        EventSummaryResponse response = new EventSummaryResponse();
+
+        response.setId(event.getId());
+        response.setTitle(event.getTitle());
+        response.setStartDateTime(event.getStartDateTime());
+        response.setEndDateTime(event.getEndDateTime());
 
         return response;
     }
