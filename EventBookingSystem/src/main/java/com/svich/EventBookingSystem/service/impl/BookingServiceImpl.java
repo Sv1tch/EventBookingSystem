@@ -7,9 +7,10 @@ import com.svich.EventBookingSystem.entity.booking.Booking;
 import com.svich.EventBookingSystem.entity.customer.Customer;
 import com.svich.EventBookingSystem.entity.event.Event;
 import com.svich.EventBookingSystem.exception.booking.BookingNotFoundException;
+import com.svich.EventBookingSystem.exception.booking.InvalidBookingStatusTransitionException;
 import com.svich.EventBookingSystem.exception.booking.NotEnoughSeatsException;
 import com.svich.EventBookingSystem.exception.customer.CustomerNotFoundException;
-import com.svich.EventBookingSystem.exception.booking.InvalidEventStatusException;
+import com.svich.EventBookingSystem.exception.event.InvalidEventStatusException;
 import com.svich.EventBookingSystem.exception.event.EventNotFoundException;
 import com.svich.EventBookingSystem.mapper.booking.BookingMapper;
 import com.svich.EventBookingSystem.mapper.customer.CustomerMapper;
@@ -99,7 +100,24 @@ public class BookingServiceImpl implements BookingService {
     public BookingResponse updateById(Long bookingId, UpdateBookingRequest request){
         Booking booking = findBookingById(bookingId);
 
+        Event event = booking.getEvent();
+
+        if(event.getStatus() != EventStatus.PUBLISHED){
+            throw new InvalidEventStatusException("Booking of the event with status " + event.getStatus() + " can't be completed");
+        }
+
+        Long bookedQuantity = bookingRepository.getBookedQuantity(
+                event.getId(),
+                List.of(BookingStatus.PENDING, BookingStatus.CONFIRMED)
+        );
+
+        if(bookedQuantity - booking.getQuantity() + request.getQuantity() > event.getCapacity()){
+            throw new NotEnoughSeatsException("Not enough free seats left");
+        }
+
         bookingMapper.updateEntity(request, booking);
+        booking.setTotalPrice(event.getPrice().multiply(BigDecimal.valueOf(request.getQuantity())));
+        booking.setUpdatedAt(LocalDateTime.now());
 
         Booking savedBooking = bookingRepository.save(booking);
 
@@ -113,6 +131,7 @@ public class BookingServiceImpl implements BookingService {
     @Override
     public void deleteById(Long bookingId){
         Booking booking = findBookingById(bookingId);
+
 
         bookingRepository.delete(booking);
     }
@@ -142,5 +161,47 @@ public class BookingServiceImpl implements BookingService {
                                 "Customer with id " + customerId + " not found"
                         )
                 );
+    }
+
+    // STATUS CHANGING
+    private BookingResponse changeStatus(Booking booking, BookingStatus targetStatus){
+        BookingStatus currentStatus = booking.getStatus();
+        boolean canTransit = false;
+
+        if(targetStatus.equals(BookingStatus.CONFIRMED)){
+            canTransit = (currentStatus.equals(BookingStatus.PENDING));
+        }
+        else if(targetStatus.equals(BookingStatus.CANCELLED)){
+            canTransit = (currentStatus.equals(BookingStatus.PENDING) || currentStatus.equals(BookingStatus.CONFIRMED));
+        }
+
+        if(canTransit){
+            booking.setStatus(targetStatus);
+            booking.setUpdatedAt(LocalDateTime.now());
+
+            Booking savedBooking = bookingRepository.save(booking);
+
+            return bookingMapper.toResponse(
+                    savedBooking,
+                    eventMapper.toSummaryResponse(booking.getEvent()),
+                    customerMapper.toSummaryResponse(booking.getCustomer())
+            );
+        }
+
+        throw new InvalidBookingStatusTransitionException("Booking with id " + booking.getId() + " cannot be changed from " + currentStatus + " to " + targetStatus);
+    }
+
+    @Override
+    public BookingResponse confirmBooking(Long bookingId){
+        Booking booking = findBookingById(bookingId);
+
+        return changeStatus(booking, BookingStatus.CONFIRMED);
+    }
+
+    @Override
+    public BookingResponse cancelBooking(Long bookingId){
+        Booking booking = findBookingById(bookingId);
+
+        return changeStatus(booking, BookingStatus.CANCELLED);
     }
 }

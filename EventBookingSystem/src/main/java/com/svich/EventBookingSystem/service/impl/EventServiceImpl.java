@@ -6,7 +6,7 @@ import com.svich.EventBookingSystem.dto.event.response.EventResponse;
 import com.svich.EventBookingSystem.entity.category.Category;
 import com.svich.EventBookingSystem.entity.event.Event;
 import com.svich.EventBookingSystem.entity.venue.Venue;
-import com.svich.EventBookingSystem.exception.InvalidEventStatusTransitionException;
+import com.svich.EventBookingSystem.exception.event.InvalidEventStatusTransitionException;
 import com.svich.EventBookingSystem.exception.category.CategoryNotFoundException;
 import com.svich.EventBookingSystem.exception.event.EventNotFoundException;
 import com.svich.EventBookingSystem.exception.venue.VenueNotFoundException;
