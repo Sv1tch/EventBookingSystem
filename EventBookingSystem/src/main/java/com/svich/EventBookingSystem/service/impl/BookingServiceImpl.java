@@ -22,12 +22,15 @@ import com.svich.EventBookingSystem.service.BookingService;
 import com.svich.EventBookingSystem.staticData.BookingStatus;
 import com.svich.EventBookingSystem.staticData.EventStatus;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class BookingServiceImpl implements BookingService {
@@ -41,7 +44,14 @@ public class BookingServiceImpl implements BookingService {
     private final CustomerRepository customerRepository;
 
     @Override
+    @Transactional
     public BookingResponse create(CreateBookingRequest request){
+        log.info("Create booking: eventId={}, customerId={}, quantity={}",
+                request.getEventId(),
+                request.getCustomerId(),
+                request.getQuantity()
+        );
+
         Event event = findEventById(request.getEventId());
         Customer customer = findCustomerById(request.getCustomerId());
 
@@ -68,6 +78,13 @@ public class BookingServiceImpl implements BookingService {
         booking.setUpdatedAt(currentTime);
 
         Booking savedBooking = bookingRepository.save(booking);
+
+        log.info("Created booking: bookingId={}, eventId={}, quantity={}, totalPrice={}",
+                savedBooking.getId(),
+                savedBooking.getEvent().getId(),
+                savedBooking.getQuantity(),
+                savedBooking.getTotalPrice()
+        );
 
         return bookingMapper.toResponse(
                 savedBooking,
@@ -97,8 +114,15 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
+    @Transactional
     public BookingResponse updateById(Long bookingId, UpdateBookingRequest request){
         Booking booking = findBookingById(bookingId);
+
+        log.info("Update booking: bookingId={}, prevQuantity={}, newQuantity={}",
+                bookingId,
+                booking.getQuantity(),
+                request.getQuantity()
+        );
 
         Event event = booking.getEvent();
 
@@ -121,6 +145,12 @@ public class BookingServiceImpl implements BookingService {
 
         Booking savedBooking = bookingRepository.save(booking);
 
+        log.info("Updated booking: bookingId={}, newQuantity={}, newTotalPrice={}",
+                savedBooking.getId(),
+                savedBooking.getQuantity(),
+                savedBooking.getTotalPrice()
+        );
+
         return bookingMapper.toResponse(
                 savedBooking,
                 eventMapper.toSummaryResponse(booking.getEvent()),
@@ -129,11 +159,21 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
+    @Transactional
     public void deleteById(Long bookingId){
         Booking booking = findBookingById(bookingId);
 
+        log.info("Delete booking: bookingId={}, eventId={}",
+                booking.getId(),
+                booking.getEvent().getId()
+        );
 
         bookingRepository.delete(booking);
+
+        log.info("Deleted booking: bookingId={}, eventId={}",
+                booking.getId(),
+                booking.getEvent().getId()
+        );
     }
 
     private Booking findBookingById(Long bookingId){
@@ -181,6 +221,12 @@ public class BookingServiceImpl implements BookingService {
 
             Booking savedBooking = bookingRepository.save(booking);
 
+            log.info("Booking status changed: bookingId={}, previousStatus={}, newStatus={}",
+                    booking.getId(),
+                    currentStatus,
+                    targetStatus
+            );
+
             return bookingMapper.toResponse(
                     savedBooking,
                     eventMapper.toSummaryResponse(booking.getEvent()),
@@ -192,6 +238,7 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
+    @Transactional
     public BookingResponse confirmBooking(Long bookingId){
         Booking booking = findBookingById(bookingId);
 
@@ -199,6 +246,7 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
+    @Transactional
     public BookingResponse cancelBooking(Long bookingId){
         Booking booking = findBookingById(bookingId);
 
