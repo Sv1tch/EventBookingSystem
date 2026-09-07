@@ -2,6 +2,7 @@ package com.svich.EventBookingSystem.exception;
 
 import com.svich.EventBookingSystem.exception.category.CategoryAlreadyExistsException;
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import java.util.HashMap;
 import java.util.Map;
 
+@Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
@@ -75,6 +77,15 @@ public class GlobalExceptionHandler {
                 .message(ex.getMessage())
                 .path(request.getRequestURI())
                 .build();
+
+        log.error(
+                "Unexpected error: exception={}, message={}, method={}, path={}",
+                ex.getClass().getSimpleName(),
+                ex.getMessage(),
+                request.getMethod(),
+                request.getRequestURI(),
+                ex
+        );
 
         return ResponseEntity.internalServerError()
                 .body(response);

@@ -10,10 +10,12 @@ import com.svich.EventBookingSystem.mapper.category.CategoryMapper;
 import com.svich.EventBookingSystem.repository.category.CategoryRepository;
 import com.svich.EventBookingSystem.service.CategoryService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class CategoryServiceImpl implements CategoryService {
@@ -23,6 +25,11 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public CategoryResponse create(CreateCategoryRequest request){
+
+        log.info("Creating category: name={}",
+                request.getName()
+        );
+
         if(categoryRepository.existsByName(request.getName())){
             throw new CategoryAlreadyExistsException("Category with name " + request.getName() + " already exists");
         }
@@ -30,6 +37,11 @@ public class CategoryServiceImpl implements CategoryService {
         Category category = categoryMapper.toEntity(request);
 
         Category savedCategory = categoryRepository.save(category);
+
+        log.info("Created category: categoryId={}, name={}",
+                savedCategory.getId(),
+                savedCategory.getName()
+        );
 
         return categoryMapper.toResponse(savedCategory);
     }
@@ -48,6 +60,12 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public CategoryResponse updateById(Long categoryId, UpdateCategoryRequest request){
+
+        log.info("Updating category: categoryId={}, name={}",
+                categoryId,
+                request.getName()
+        );
+
         Category category = findCategoryById(categoryId);
 
         if(!category.getName().equals(request.getName()) && categoryRepository.existsByName(request.getName())){
@@ -58,6 +76,11 @@ public class CategoryServiceImpl implements CategoryService {
 
         Category savedCategory = categoryRepository.save(category);
 
+        log.info("Updated category: categoryId={}, name={}",
+                savedCategory.getId(),
+                savedCategory.getName()
+        );
+
         return categoryMapper.toResponse(savedCategory);
     }
 
@@ -65,7 +88,18 @@ public class CategoryServiceImpl implements CategoryService {
     public void deleteById(Long categoryId){
         Category category = findCategoryById(categoryId);
 
+        log.info("Delete category: categoryId={}, name={}",
+                category.getId(),
+                category.getName()
+        );
+
         categoryRepository.delete(category);
+
+        log.info("Deleted category: categoryId={}, name={}",
+                category.getId(),
+                category.getName()
+        );
+
     }
 
     private Category findCategoryById(Long categoryId){

@@ -20,6 +20,7 @@ import com.svich.EventBookingSystem.repository.venue.VenueRepository;
 import com.svich.EventBookingSystem.service.EventService;
 import com.svich.EventBookingSystem.staticData.EventStatus;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -27,6 +28,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class EventServiceImpl implements EventService {
@@ -41,6 +43,14 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public EventResponse create(CreateEventRequest request) {
+        log.info("Creating event: title={}, categoryId={}, venueId={}, price={}, capacity={}",
+                request.getTitle(),
+                request.getCategoryId(),
+                request.getVenueId(),
+                request.getPrice(),
+                request.getCapacity()
+        );
+
         Category category = findCategoryById(request.getCategoryId());
         Venue venue = findVenueById(request.getVenueId());
 
@@ -49,6 +59,12 @@ public class EventServiceImpl implements EventService {
         event.setStatus(EventStatus.DRAFT);
 
         Event savedEvent = eventRepository.save(event);
+
+        log.info("Created event: eventId={}, title={}, status={}",
+                savedEvent.getId(),
+                savedEvent.getTitle(),
+                savedEvent.getStatus()
+        );
 
         return eventMapper.toResponse(
                 savedEvent,
@@ -70,6 +86,11 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public EventResponse updateById(Long eventId, UpdateEventRequest request) {
+        log.info("Updating event: eventId={}, title={}",
+                eventId,
+                request.getTitle()
+        );
+
         Event event = findEventById(eventId);
         Category category = findCategoryById(request.getCategoryId());
         Venue venue = findVenueById(request.getVenueId());
@@ -77,6 +98,12 @@ public class EventServiceImpl implements EventService {
         eventMapper.updateEntity(request, event, category, venue);
 
         Event savedEvent = eventRepository.save(event);
+
+        log.info("Updated event: eventId={}, title={}, status={}",
+                savedEvent.getId(),
+                savedEvent.getTitle(),
+                savedEvent.getStatus()
+        );
 
         return eventMapper.toResponse(
                 savedEvent,
@@ -89,7 +116,17 @@ public class EventServiceImpl implements EventService {
     public void deleteById(Long eventId) {
         Event event = findEventById(eventId);
 
+        log.info("Delete event: eventId={}, title={}",
+                event.getId(),
+                event.getTitle()
+        );
+
         eventRepository.delete(event);
+
+        log.info("Deleted event: eventId={}, title={}",
+                event.getId(),
+                event.getTitle()
+        );
     }
 
     private Event findEventById(Long eventId) {
@@ -138,6 +175,12 @@ public class EventServiceImpl implements EventService {
             event.setStatus(targetStatus);
 
             Event savedEvent = eventRepository.save(event);
+
+            log.info("Event status changed: eventId={}, prevStatus={}, newStatus={}",
+                    savedEvent.getId(),
+                    currentStatus,
+                    targetStatus
+            );
 
             return eventMapper.toResponse(
                     savedEvent,

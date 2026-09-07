@@ -10,10 +10,12 @@ import com.svich.EventBookingSystem.mapper.venue.VenueMapper;
 import com.svich.EventBookingSystem.repository.venue.VenueRepository;
 import com.svich.EventBookingSystem.service.VenueService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class VenueServiceImpl implements VenueService {
@@ -23,6 +25,12 @@ public class VenueServiceImpl implements VenueService {
 
     @Override
     public VenueResponse create(CreateVenueRequest request){
+
+        log.info("Creating venue: name={}, city={}",
+                request.getName(),
+                request.getCity()
+        );
+
         if(venueRepository.existsByNameAndCityAndAddress(request.getName(), request.getCity(), request.getAddress())){
             throw new VenueAlreadyExistsException("Venue with name " + request.getName() + ", city " + request.getCity() + ", address " + request.getAddress() + " already exists");
         }
@@ -30,6 +38,12 @@ public class VenueServiceImpl implements VenueService {
         Venue venue = venueMapper.toEntity(request);
 
         Venue savedVenue = venueRepository.save(venue);
+
+        log.info("Created venue: venueId={}, name={}, city={}",
+                savedVenue.getId(),
+                savedVenue.getName(),
+                savedVenue.getCity()
+        );
 
         return venueMapper.toResponse(savedVenue);
     }
@@ -48,6 +62,13 @@ public class VenueServiceImpl implements VenueService {
 
     @Override
     public VenueResponse updateById(Long venueId, UpdateVenueRequest request){
+
+        log.info("Updating venue: venueId={}, name={}, city={}",
+                venueId,
+                request.getName(),
+                request.getCity()
+        );
+
         Venue venue = findVenueById(venueId);
 
         if(uniqueDataChanged(venue, request) && venueRepository.existsByNameAndCityAndAddress(
@@ -62,6 +83,12 @@ public class VenueServiceImpl implements VenueService {
 
         Venue savedVenue = venueRepository.save(venue);
 
+        log.info("Updated venue: venueId={}, name={}, city={}",
+                savedVenue.getId(),
+                savedVenue.getName(),
+                savedVenue.getCity()
+        );
+
         return venueMapper.toResponse(savedVenue);
     }
 
@@ -69,7 +96,19 @@ public class VenueServiceImpl implements VenueService {
     public void deleteById(Long venueId){
         Venue venue = findVenueById(venueId);
 
+        log.info("Delete venue: venueId={}, name={}, city={}",
+                venue.getId(),
+                venue.getName(),
+                venue.getCity()
+        );
+
         venueRepository.delete(venue);
+
+        log.info("Deleted venue: venueId={}, name={}, city={}",
+                venue.getId(),
+                venue.getName(),
+                venue.getCity()
+        );
     }
 
     private Venue findVenueById(Long venueId){
