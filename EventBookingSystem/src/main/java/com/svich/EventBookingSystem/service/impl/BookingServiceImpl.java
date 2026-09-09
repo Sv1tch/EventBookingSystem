@@ -7,6 +7,7 @@ import com.svich.EventBookingSystem.entity.booking.Booking;
 import com.svich.EventBookingSystem.entity.customer.Customer;
 import com.svich.EventBookingSystem.entity.event.Event;
 import com.svich.EventBookingSystem.exception.booking.BookingNotFoundException;
+import com.svich.EventBookingSystem.exception.booking.InvalidBookingStatusException;
 import com.svich.EventBookingSystem.exception.booking.InvalidBookingStatusTransitionException;
 import com.svich.EventBookingSystem.exception.booking.NotEnoughSeatsException;
 import com.svich.EventBookingSystem.exception.customer.CustomerNotFoundException;
@@ -52,7 +53,7 @@ public class BookingServiceImpl implements BookingService {
                 request.getQuantity()
         );
 
-        Event event = findEventById(request.getEventId());
+        Event event = findEventWithLockById(request.getEventId());
         Customer customer = findCustomerById(request.getCustomerId());
 
         if(event.getStatus() != EventStatus.PUBLISHED){
@@ -124,11 +125,10 @@ public class BookingServiceImpl implements BookingService {
                 request.getQuantity()
         );
 
-        Event event = booking.getEvent();
+        Event event = findEventWithLockById(booking.getEvent().getId());
 
-        if(event.getStatus() != EventStatus.PUBLISHED){
-            throw new InvalidEventStatusException("Booking of the event with status " + event.getStatus() + " can't be completed");
-        }
+        canUpdate(event.getStatus(), booking.getStatus());
+
 
         Long bookedQuantity = bookingRepository.getBookedQuantity(
                 event.getId(),
@@ -163,6 +163,8 @@ public class BookingServiceImpl implements BookingService {
     public void deleteById(Long bookingId){
         Booking booking = findBookingById(bookingId);
 
+        Event event = findEventWithLockById(booking.getEvent().getId());
+
         log.info("Delete booking: bookingId={}, eventId={}",
                 booking.getId(),
                 booking.getEvent().getId()
@@ -185,8 +187,8 @@ public class BookingServiceImpl implements BookingService {
                 );
     }
 
-    private Event findEventById(Long eventId){
-        return eventRepository.findById(eventId)
+    private Event findEventWithLockById(Long eventId){
+        return eventRepository.findWithLockById(eventId)
                 .orElseThrow(() ->
                         new EventNotFoundException(
                                 "Event with id " + eventId + " not found"
@@ -201,6 +203,16 @@ public class BookingServiceImpl implements BookingService {
                                 "Customer with id " + customerId + " not found"
                         )
                 );
+    }
+
+    private void canUpdate(EventStatus eventStatus, BookingStatus bookingStatus){
+        if(eventStatus != EventStatus.PUBLISHED){
+            throw new InvalidEventStatusException("Booking of the event with status " + eventStatus + " can't be completed");
+        }
+
+        if(bookingStatus == BookingStatus.CANCELLED){
+            throw new InvalidBookingStatusException("Booking with status " + bookingStatus + " can't be updated");
+        }
     }
 
     // STATUS CHANGING
@@ -249,6 +261,8 @@ public class BookingServiceImpl implements BookingService {
     @Transactional
     public BookingResponse cancelBooking(Long bookingId){
         Booking booking = findBookingById(bookingId);
+
+        Event event = findEventWithLockById(booking.getEvent().getId());
 
         return changeStatus(booking, BookingStatus.CANCELLED);
     }
