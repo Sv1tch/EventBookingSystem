@@ -26,6 +26,7 @@ public interface EventService {
             LocalDateTime endDateTime,
             Long categoryId,
             Long venueId,
+            String organizer,
             Pageable pageable
     );
 }

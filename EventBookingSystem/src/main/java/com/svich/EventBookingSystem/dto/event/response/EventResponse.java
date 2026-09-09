@@ -27,6 +27,8 @@ public class EventResponse {
 
     private int capacity;
 
+    private String organizer;
+
     private EventStatus status;
 
     private CategorySummaryResponse category;

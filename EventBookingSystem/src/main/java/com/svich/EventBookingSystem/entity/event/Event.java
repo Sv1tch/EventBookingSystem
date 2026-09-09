@@ -49,6 +49,12 @@ public class Event {
     @Column(nullable = false, length = 20)
     private EventStatus status;
 
+    @Column(
+            nullable = false,
+            length = 100
+    )
+    private String organizer;
+
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "category_id", nullable = false)
     private Category category;

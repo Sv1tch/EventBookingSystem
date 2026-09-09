@@ -27,6 +27,7 @@ public class EventMapper {
         event.setEndDateTime(request.getEndDateTime());
         event.setPrice(request.getPrice());
         event.setCapacity(request.getCapacity());
+        event.setOrganizer(request.getOrganizer());
         event.setCategory(category);
         event.setVenue(venue);
 
@@ -48,6 +49,7 @@ public class EventMapper {
         response.setPrice(event.getPrice());
         response.setCapacity(event.getCapacity());
         response.setStatus(event.getStatus());
+        response.setOrganizer(event.getOrganizer());
         response.setCategory(categorySummaryResponse);
         response.setVenue(venueSummaryResponse);
 
@@ -59,6 +61,7 @@ public class EventMapper {
 
         response.setId(event.getId());
         response.setTitle(event.getTitle());
+        response.setOrganizer(event.getOrganizer());
         response.setStartDateTime(event.getStartDateTime());
         response.setEndDateTime(event.getEndDateTime());
 
@@ -77,6 +80,7 @@ public class EventMapper {
         event.setEndDateTime(request.getEndDateTime());
         event.setPrice(request.getPrice());
         event.setCapacity(request.getCapacity());
+        event.setOrganizer(request.getOrganizer());
         event.setCategory(category);
         event.setVenue(venue);
     }

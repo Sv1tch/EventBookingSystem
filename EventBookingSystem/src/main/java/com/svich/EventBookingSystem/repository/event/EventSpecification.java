@@ -55,4 +55,12 @@ public class EventSpecification {
                         venueId
                 );
     }
+
+    public static Specification<Event> hasOrganizer(String organizer){
+        return (root, query, criteriaBuilder) ->
+                criteriaBuilder.like(
+                        criteriaBuilder.lower(root.get("organizer")),
+                        "%" + organizer.toLowerCase() + "%"
+                );
+    }
 }

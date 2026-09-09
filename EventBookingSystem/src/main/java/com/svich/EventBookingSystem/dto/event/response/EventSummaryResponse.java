@@ -13,6 +13,8 @@ public class EventSummaryResponse {
 
     private String title;
 
+    private String organizer;
+
     private LocalDateTime startDateTime;
 
     private LocalDateTime endDateTime;

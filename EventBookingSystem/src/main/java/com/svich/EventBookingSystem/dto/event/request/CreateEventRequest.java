@@ -42,6 +42,14 @@ public class CreateEventRequest implements EventDateRequest {
     @Positive(message = "Capacity must be greater than zero")
     private int capacity;
 
+    @NotBlank(message = "Organizer can't be blank")
+    @Size(
+            min = 1,
+            max = 100,
+            message = "Event organizer must be between 1 and 100 characters"
+    )
+    private String organizer;
+
     @NotNull(message = "Category id can't be null")
     private Long categoryId;
 

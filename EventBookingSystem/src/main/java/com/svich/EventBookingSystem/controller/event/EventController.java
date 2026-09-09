@@ -42,12 +42,13 @@ public class EventController {
             @RequestParam(required = false) LocalDateTime startDateTime,
             @RequestParam(required = false) LocalDateTime endDateTime,
             @RequestParam(required = false) Long categoryId,
-            @RequestParam(required = false) Long venueId
+            @RequestParam(required = false) Long venueId,
+            @RequestParam(required = false) String organizer
             ){
 
         Pageable pageable = factory.create(page, size, sortBy, direction);
 
-        Page<EventResponse> events = eventService.findEvents(title, status, startDateTime, endDateTime, categoryId, venueId, pageable);
+        Page<EventResponse> events = eventService.findEvents(title, status, startDateTime, endDateTime, categoryId, venueId, organizer, pageable);
 
         return new ResponseEntity<>(events, HttpStatus.OK);
     }

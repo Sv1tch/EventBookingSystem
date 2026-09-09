@@ -222,6 +222,7 @@ public class EventServiceImpl implements EventService {
             LocalDateTime endDateTime,
             Long categoryId,
             Long venueId,
+            String organizer,
             Pageable pageable
     ){
         Specification<Event> spec = (root, query, criteriaBuilder) -> null;
@@ -248,6 +249,9 @@ public class EventServiceImpl implements EventService {
 
         if(venueId != null){
             spec = spec.and(EventSpecification.hasVenue(venueId));
+        }
+        if(organizer != null && !organizer.isBlank()){
+            spec = spec.and(EventSpecification.hasOrganizer(organizer));
         }
 
         Page<Event> events = eventRepository.findAll(spec, pageable);
