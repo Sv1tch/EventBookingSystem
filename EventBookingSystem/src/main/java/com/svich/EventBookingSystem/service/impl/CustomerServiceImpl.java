@@ -11,10 +11,11 @@ import com.svich.EventBookingSystem.repository.customer.CustomerRepository;
 import com.svich.EventBookingSystem.service.CustomerService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Slf4j
 @Service
@@ -60,10 +61,10 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public List<CustomerResponse> findAll(){
-        List<Customer> customers = customerRepository.findAll();
+    public Page<CustomerResponse> findAll(Pageable pageable){
+        Page<Customer> customers = customerRepository.findAll(pageable);
 
-        return customers.stream().map(customerMapper::toResponse).toList();
+        return customers.map(customerMapper::toResponse);
     }
 
     @Override

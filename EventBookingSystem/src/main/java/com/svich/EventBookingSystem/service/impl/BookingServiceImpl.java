@@ -24,6 +24,8 @@ import com.svich.EventBookingSystem.staticData.BookingStatus;
 import com.svich.EventBookingSystem.staticData.EventStatus;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -106,12 +108,12 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public List<BookingResponse> findAll(){
-        List<Booking> bookings = bookingRepository.findAll();
+    public Page<BookingResponse> findAll(Pageable pageable){
+        Page<Booking> bookings = bookingRepository.findAll(pageable);
 
-        return bookings.stream().map(booking ->
+        return bookings.map(booking ->
                 bookingMapper.toResponse(booking, eventMapper.toSummaryResponse(booking.getEvent()), customerMapper.toSummaryResponse(booking.getCustomer()))
-        ).toList();
+        );
     }
 
     @Override

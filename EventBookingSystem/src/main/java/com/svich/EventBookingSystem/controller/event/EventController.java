@@ -15,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
+import java.util.Set;
 
 
 @RestController
@@ -23,6 +24,16 @@ import java.time.LocalDateTime;
 public class EventController {
     private final EventService eventService;
     private final PageableFactory factory;
+
+    private static final Set<String> ALLOWED_SORT_FIELDS = Set.of(
+            "title",
+            "price",
+            "startDateTime",
+            "endDateTime",
+            "capacity",
+            "status",
+            "organizer"
+    );
 
     @PostMapping("")
     public ResponseEntity<EventResponse> create(@Valid @RequestBody CreateEventRequest request){
@@ -46,7 +57,7 @@ public class EventController {
             @RequestParam(required = false) String organizer
             ){
 
-        Pageable pageable = factory.create(page, size, sortBy, direction);
+        Pageable pageable = factory.create(page, size, sortBy, direction, ALLOWED_SORT_FIELDS);
 
         Page<EventResponse> events = eventService.findEvents(title, status, startDateTime, endDateTime, categoryId, venueId, organizer, pageable);
 

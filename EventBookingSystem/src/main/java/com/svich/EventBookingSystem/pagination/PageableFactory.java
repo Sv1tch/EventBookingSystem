@@ -10,17 +10,8 @@ import java.util.Set;
 
 @Component
 public class PageableFactory {
-    private static final Set<String> ALLOWED_SORT_FIELDS= Set.of(
-            "title",
-            "price",
-            "startDateTime",
-            "endDateTime",
-            "capacity",
-            "status",
-            "organizer"
-    );
 
-    public Pageable create(int page, int size, String sortBy, String direction){
+    public Pageable create(int page, int size, String sortBy, String direction, Set<String> ALLOWED_SORT_FIELDS){
 
         //Validation
         if(page < 0){

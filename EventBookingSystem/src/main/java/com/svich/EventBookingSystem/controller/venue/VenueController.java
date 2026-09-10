@@ -3,14 +3,18 @@ package com.svich.EventBookingSystem.controller.venue;
 import com.svich.EventBookingSystem.dto.venue.request.CreateVenueRequest;
 import com.svich.EventBookingSystem.dto.venue.request.UpdateVenueRequest;
 import com.svich.EventBookingSystem.dto.venue.response.VenueResponse;
+import com.svich.EventBookingSystem.pagination.PageableFactory;
 import com.svich.EventBookingSystem.service.VenueService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/api/venues")
@@ -18,6 +22,14 @@ import java.util.List;
 public class VenueController {
 
     private final VenueService venueService;
+    private final PageableFactory factory;
+
+    private static final Set<String> ALLOWED_SORT_FIELDS = Set.of(
+            "id",
+            "name",
+            "city",
+            "capacity"
+    );
 
     @PostMapping("")
     public ResponseEntity<VenueResponse> create(@Valid @RequestBody CreateVenueRequest request){
@@ -27,8 +39,15 @@ public class VenueController {
     }
 
     @GetMapping("")
-    public ResponseEntity<List<VenueResponse>> findAll(){
-        List<VenueResponse> venues = venueService.findAll();
+    public ResponseEntity<Page<VenueResponse>> findAll(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "name") String sortBy,
+            @RequestParam(defaultValue = "asc") String direction
+    ){
+        Pageable pageable = factory.create(page, size, sortBy, direction, ALLOWED_SORT_FIELDS);
+
+        Page<VenueResponse> venues = venueService.findAll(pageable);
 
         return new ResponseEntity<>(venues, HttpStatus.OK);
     }

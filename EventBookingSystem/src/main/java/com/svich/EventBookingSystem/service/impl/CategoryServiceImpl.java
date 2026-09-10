@@ -8,12 +8,14 @@ import com.svich.EventBookingSystem.dto.category.request.UpdateCategoryRequest;
 import com.svich.EventBookingSystem.entity.category.Category;
 import com.svich.EventBookingSystem.mapper.category.CategoryMapper;
 import com.svich.EventBookingSystem.repository.category.CategoryRepository;
+import com.svich.EventBookingSystem.repository.category.CategorySpecification;
 import com.svich.EventBookingSystem.service.CategoryService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Slf4j
 @Service
@@ -44,13 +46,6 @@ public class CategoryServiceImpl implements CategoryService {
         );
 
         return categoryMapper.toResponse(savedCategory);
-    }
-
-    @Override
-    public List<CategoryResponse> findAll(){
-        List<Category> categories = categoryRepository.findAll();
-
-        return categories.stream().map(categoryMapper::toResponse).toList();
     }
 
     @Override
@@ -104,5 +99,22 @@ public class CategoryServiceImpl implements CategoryService {
 
     private Category findCategoryById(Long categoryId){
         return categoryRepository.findById(categoryId).orElseThrow(() -> new CategoryNotFoundException("Category with id %d not found".formatted(categoryId)));
+    }
+
+    // SEARCH FUTURES
+    @Override
+    public Page<CategoryResponse> findCategories(
+            String name,
+            Pageable pageable
+    ){
+        Specification<Category> spec = (root, query, criteriaBuilder) -> null;
+
+        if(name != null && !name.isBlank()){
+            spec = spec.and(CategorySpecification.hasName(name));
+        }
+
+        Page<Category> categories = categoryRepository.findAll(spec, pageable);
+
+        return categories.map(categoryMapper::toResponse);
     }
 }

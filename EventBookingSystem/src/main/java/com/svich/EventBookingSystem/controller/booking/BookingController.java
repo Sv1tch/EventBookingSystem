@@ -3,14 +3,17 @@ package com.svich.EventBookingSystem.controller.booking;
 import com.svich.EventBookingSystem.dto.booking.request.CreateBookingRequest;
 import com.svich.EventBookingSystem.dto.booking.request.UpdateBookingRequest;
 import com.svich.EventBookingSystem.dto.booking.response.BookingResponse;
+import com.svich.EventBookingSystem.pagination.PageableFactory;
 import com.svich.EventBookingSystem.service.BookingService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/api/bookings")
@@ -18,6 +21,16 @@ import java.util.List;
 public class BookingController {
 
     private final BookingService bookingService;
+    private final PageableFactory factory;
+
+    private static final Set<String> ALLOWED_SORT_FIELDS = Set.of(
+            "id",
+            "quantity",
+            "totalPrice",
+            "status",
+            "createdAt",
+            "updatedAt"
+    );
 
     @PostMapping("")
     public ResponseEntity<BookingResponse> create(@Valid @RequestBody CreateBookingRequest request){
@@ -34,8 +47,15 @@ public class BookingController {
     }
 
     @GetMapping("")
-    public ResponseEntity<List<BookingResponse>> findAll(){
-        List<BookingResponse> responses = bookingService.findAll();
+    public ResponseEntity<Page<BookingResponse>> findCategories(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "createdAt") String sortBy,
+            @RequestParam(defaultValue = "desc") String direction
+    ){
+        Pageable pageable = factory.create(page, size, sortBy, direction, ALLOWED_SORT_FIELDS);
+
+        Page<BookingResponse> responses = bookingService.findAll(pageable);
 
         return new ResponseEntity<>(responses, HttpStatus.OK);
     }

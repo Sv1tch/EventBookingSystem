@@ -11,9 +11,10 @@ import com.svich.EventBookingSystem.repository.venue.VenueRepository;
 import com.svich.EventBookingSystem.service.VenueService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 
 @Slf4j
 @Service
@@ -49,10 +50,10 @@ public class VenueServiceImpl implements VenueService {
     }
 
     @Override
-    public List<VenueResponse> findAll(){
-        List<Venue> venues = venueRepository.findAll();
+    public Page<VenueResponse> findAll(Pageable pageable){
+        Page<Venue> venues = venueRepository.findAll(pageable);
 
-        return venues.stream().map(venueMapper::toResponse).toList();
+        return venues.map(venueMapper::toResponse);
     }
 
     @Override

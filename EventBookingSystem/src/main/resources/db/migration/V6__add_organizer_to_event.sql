@@ -1,0 +1,2 @@
+ALTER TABLE app_event
+ADD COLUMN organizer VARCHAR(100) NOT NULL ;
