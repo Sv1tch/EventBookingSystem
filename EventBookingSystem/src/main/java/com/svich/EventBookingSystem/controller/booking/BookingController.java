@@ -5,6 +5,7 @@ import com.svich.EventBookingSystem.dto.booking.request.UpdateBookingRequest;
 import com.svich.EventBookingSystem.dto.booking.response.BookingResponse;
 import com.svich.EventBookingSystem.pagination.PageableFactory;
 import com.svich.EventBookingSystem.service.BookingService;
+import com.svich.EventBookingSystem.staticData.BookingStatus;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -51,11 +52,14 @@ public class BookingController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "createdAt") String sortBy,
-            @RequestParam(defaultValue = "desc") String direction
-    ){
+            @RequestParam(defaultValue = "desc") String direction,
+            @RequestParam(required = false)BookingStatus status,
+            @RequestParam(required = false) Long eventId,
+            @RequestParam(required = false) Long customerId
+            ){
         Pageable pageable = factory.create(page, size, sortBy, direction, ALLOWED_SORT_FIELDS);
 
-        Page<BookingResponse> responses = bookingService.findAll(pageable);
+        Page<BookingResponse> responses = bookingService.findBookings(status, eventId, customerId, pageable);
 
         return new ResponseEntity<>(responses, HttpStatus.OK);
     }

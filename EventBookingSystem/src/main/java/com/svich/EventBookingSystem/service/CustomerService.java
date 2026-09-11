@@ -10,7 +10,13 @@ public interface CustomerService {
 
     CustomerResponse create(CreateCustomerRequest request);
     CustomerResponse findById(Long customerId);
-    Page<CustomerResponse> findAll(Pageable pageable);
     CustomerResponse updateById(Long customerId, UpdateCustomerRequest request);
     void deleteById(Long customerId);
+
+    Page<CustomerResponse> findCustomers(
+            String firstName,
+            String lastName,
+            String email,
+            Pageable pageable
+    );
 }

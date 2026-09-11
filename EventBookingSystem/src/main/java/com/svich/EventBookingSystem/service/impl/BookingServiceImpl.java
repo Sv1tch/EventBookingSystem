@@ -17,6 +17,7 @@ import com.svich.EventBookingSystem.mapper.booking.BookingMapper;
 import com.svich.EventBookingSystem.mapper.customer.CustomerMapper;
 import com.svich.EventBookingSystem.mapper.event.EventMapper;
 import com.svich.EventBookingSystem.repository.booking.BookingRepository;
+import com.svich.EventBookingSystem.repository.booking.BookingSpecification;
 import com.svich.EventBookingSystem.repository.customer.CustomerRepository;
 import com.svich.EventBookingSystem.repository.event.EventRepository;
 import com.svich.EventBookingSystem.service.BookingService;
@@ -26,6 +27,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -104,15 +106,6 @@ public class BookingServiceImpl implements BookingService {
                 booking,
                 eventMapper.toSummaryResponse(booking.getEvent()),
                 customerMapper.toSummaryResponse(booking.getCustomer())
-        );
-    }
-
-    @Override
-    public Page<BookingResponse> findAll(Pageable pageable){
-        Page<Booking> bookings = bookingRepository.findAll(pageable);
-
-        return bookings.map(booking ->
-                bookingMapper.toResponse(booking, eventMapper.toSummaryResponse(booking.getEvent()), customerMapper.toSummaryResponse(booking.getCustomer()))
         );
     }
 
@@ -267,5 +260,33 @@ public class BookingServiceImpl implements BookingService {
         Event event = findEventWithLockById(booking.getEvent().getId());
 
         return changeStatus(booking, BookingStatus.CANCELLED);
+    }
+
+    //SEARCH FUTURES
+
+    @Override
+    public Page<BookingResponse> findBookings(
+            BookingStatus status,
+            Long eventId,
+            Long customerId,
+            Pageable pageable
+    ){
+        Specification<Booking> spec = (root, query, criteriaBuilder) -> null;
+
+        if(status != null){
+            spec = spec.and(BookingSpecification.hasStatus(status));
+        }
+        if(eventId != null){
+            spec = spec.and(BookingSpecification.hasEventId(eventId));
+        }
+        if(customerId != null){
+            spec = spec.and(BookingSpecification.hasCustomerId(customerId));
+        }
+
+        Page<Booking> bookings = bookingRepository.findAll(spec, pageable);
+
+        return bookings.map(booking ->
+                bookingMapper.toResponse(booking, eventMapper.toSummaryResponse(booking.getEvent()), customerMapper.toSummaryResponse(booking.getCustomer()))
+        );
     }
 }

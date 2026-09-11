@@ -13,7 +13,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.Set;
 
 @RestController
@@ -43,11 +42,13 @@ public class VenueController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "name") String sortBy,
-            @RequestParam(defaultValue = "asc") String direction
+            @RequestParam(defaultValue = "asc") String direction,
+            @RequestParam(required = false) String name,
+            @RequestParam(required = false) String city
     ){
         Pageable pageable = factory.create(page, size, sortBy, direction, ALLOWED_SORT_FIELDS);
 
-        Page<VenueResponse> venues = venueService.findAll(pageable);
+        Page<VenueResponse> venues = venueService.findVenues(name, city, pageable);
 
         return new ResponseEntity<>(venues, HttpStatus.OK);
     }

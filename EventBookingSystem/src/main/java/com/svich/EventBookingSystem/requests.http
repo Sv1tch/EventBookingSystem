@@ -6,13 +6,6 @@ Content-Type: application/json
   "name": "Music"
 }
 
-###
-
-GET http://localhost:8080/api/categories
-
-###
-DELETE http://localhost:8080/api/categories/1
-
 ### CREATE CATEGORY 2
 POST http://localhost:8080/api/categories
 Content-Type: application/json
@@ -161,82 +154,5 @@ Content-Type: application/json
 }
 
 ###
-GET http://localhost:8080/api/events?title=music&status=PUBLISHED&startDateTime=2026-09-10T23:00:00
 
-###
-POST http://localhost:8080/api/events/4/publish
-
-###
-GET http://localhost:8080/api/events?title=music&sortBy=price&page=0&size=2&direction=desc
-
-###
-
-GET http://localhost:8080/api/events?organizer=live&status=PUBLISHED
-
-
-
-
-
-
-
-
-
-
-###
-POST http://localhost:8080/api/customers
-Content-Type: application/json
-
-{
-  "firstName": "Ivan",
-  "lastName": "Petrov",
-  "email": "ivan.petrov@test.com",
-  "phoneNumber": "+380501234567"
-}
-
-###
-POST http://localhost:8080/api/events
-Content-Type: application/json
-
-{
-  "title": "Concurrency Test Event",
-  "description": "Event for booking capacity testing",
-  "startDateTime": "2027-10-10T18:00:00",
-  "endDateTime": "2027-10-10T21:00:00",
-  "price": 100,
-  "capacity": 5,
-  "categoryId": 1,
-  "venueId": 1
-}
-
-###
-POST http://localhost:8080/api/events/1/publish
-
-###
-POST http://localhost:8080/api/bookings
-Content-Type: application/json
-
-{
-  "eventId": 1,
-  "customerId": 1,
-  "quantity": 2
-}
-
-###
-POST http://localhost:8080/api/bookings
-Content-Type: application/json
-
-{
-  "eventId": 1,
-  "customerId": 1,
-  "quantity": 3
-}
-
-###
-POST http://localhost:8080/api/bookings
-Content-Type: application/json
-
-{
-  "eventId": 1,
-  "customerId": 1,
-  "quantity": 2
-}
+GET http://localhost:8080/api/venues?city=Warsaw&name=center

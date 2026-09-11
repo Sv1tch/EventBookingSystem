@@ -50,11 +50,14 @@ public class CustomerController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "firstName") String sortBy,
-            @RequestParam(defaultValue = "asc") String direction
+            @RequestParam(defaultValue = "asc") String direction,
+            @RequestParam(required = false) String firstName,
+            @RequestParam(required = false) String lastName,
+            @RequestParam(required = false) String email
     ){
         Pageable pageable = factory.create(page, size, sortBy, direction, ALLOWED_SORT_FIELDS);
 
-        Page<CustomerResponse> responses = customerService.findAll(pageable);
+        Page<CustomerResponse> responses = customerService.findCustomers(firstName, lastName, email, pageable);
 
         return new ResponseEntity<>(responses, HttpStatus.OK);
     }

@@ -8,8 +8,13 @@ import org.springframework.data.domain.Pageable;
 
 public interface VenueService {
     VenueResponse create(CreateVenueRequest request);
-    Page<VenueResponse> findAll(Pageable pageable);
     VenueResponse findById(Long venueId);
     VenueResponse updateById(Long venueId, UpdateVenueRequest request);
     void deleteById(Long venueId);
+
+    Page<VenueResponse> findVenues(
+            String name,
+            String city,
+            Pageable pageable
+    );
 }

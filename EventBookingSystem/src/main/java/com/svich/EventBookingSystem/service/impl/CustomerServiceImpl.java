@@ -8,11 +8,13 @@ import com.svich.EventBookingSystem.exception.customer.CustomerAlreadyExistsExce
 import com.svich.EventBookingSystem.exception.customer.CustomerNotFoundException;
 import com.svich.EventBookingSystem.mapper.customer.CustomerMapper;
 import com.svich.EventBookingSystem.repository.customer.CustomerRepository;
+import com.svich.EventBookingSystem.repository.customer.CustomerSpecification;
 import com.svich.EventBookingSystem.service.CustomerService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -58,13 +60,6 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public CustomerResponse findById(Long customerId){
         return customerMapper.toResponse(findCustomerById(customerId));
-    }
-
-    @Override
-    public Page<CustomerResponse> findAll(Pageable pageable){
-        Page<Customer> customers = customerRepository.findAll(pageable);
-
-        return customers.map(customerMapper::toResponse);
     }
 
     @Override
@@ -115,5 +110,31 @@ public class CustomerServiceImpl implements CustomerService {
 
     private Customer findCustomerById(Long customerId){
         return customerRepository.findById(customerId).orElseThrow(() -> new CustomerNotFoundException("Customer with id " + customerId + " not found"));
+    }
+
+    //SEARCH FUTURES
+
+    @Override
+    public Page<CustomerResponse> findCustomers(
+            String firstName,
+            String lastName,
+            String email,
+            Pageable pageable
+    ){
+        Specification<Customer> spec = (root, query, criteriaBuilder) -> null;
+
+        if(firstName != null && !firstName.isBlank()){
+            spec = spec.and(CustomerSpecification.hasFirstName(firstName));
+        }
+        if(lastName != null && !lastName.isBlank()){
+            spec = spec.and(CustomerSpecification.hasLastName(lastName));
+        }
+        if(email != null && !email.isBlank()){
+            spec = spec.and(CustomerSpecification.hasEmail(email));
+        }
+
+        Page<Customer> customers = customerRepository.findAll(spec, pageable);
+
+        return customers.map(customerMapper::toResponse);
     }
 }

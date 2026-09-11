@@ -8,11 +8,13 @@ import com.svich.EventBookingSystem.exception.venue.VenueAlreadyExistsException;
 import com.svich.EventBookingSystem.exception.venue.VenueNotFoundException;
 import com.svich.EventBookingSystem.mapper.venue.VenueMapper;
 import com.svich.EventBookingSystem.repository.venue.VenueRepository;
+import com.svich.EventBookingSystem.repository.venue.VenueSpecification;
 import com.svich.EventBookingSystem.service.VenueService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 
@@ -47,13 +49,6 @@ public class VenueServiceImpl implements VenueService {
         );
 
         return venueMapper.toResponse(savedVenue);
-    }
-
-    @Override
-    public Page<VenueResponse> findAll(Pageable pageable){
-        Page<Venue> venues = venueRepository.findAll(pageable);
-
-        return venues.map(venueMapper::toResponse);
     }
 
     @Override
@@ -120,5 +115,26 @@ public class VenueServiceImpl implements VenueService {
         return !venue.getName().equals(request.getName())
                 || !venue.getCity().equals(request.getCity())
                 || !venue.getAddress().equals(request.getAddress());
+    }
+
+    // SEARCH FUTURES
+    @Override
+    public Page<VenueResponse> findVenues(
+            String name,
+            String city,
+            Pageable pageable
+    ){
+        Specification<Venue> spec = (root, query, criteriaBuilder) -> null;
+
+        if(name != null && !name.isBlank()){
+            spec = spec.and(VenueSpecification.hasName(name));
+        }
+        if(city != null && !city.isBlank()){
+            spec = spec.and(VenueSpecification.hasCity(city));
+        }
+
+        Page<Venue> venues = venueRepository.findAll(spec, pageable);
+
+        return venues.map(venueMapper::toResponse);
     }
 }
