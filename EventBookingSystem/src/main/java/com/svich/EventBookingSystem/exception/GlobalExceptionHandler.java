@@ -78,6 +78,7 @@ public class GlobalExceptionHandler {
                 .path(request.getRequestURI())
                 .build();
 
+
         log.error(
                 "Unexpected error: exception={}, message={}, method={}, path={}",
                 ex.getClass().getSimpleName(),

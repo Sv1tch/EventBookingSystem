@@ -152,7 +152,3 @@ Content-Type: application/json
   "categoryId": 1,
   "venueId": 1
 }
-
-###
-
-GET http://localhost:8080/api/venues?city=Warsaw&name=center
