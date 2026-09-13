@@ -23,4 +23,10 @@ public interface BookingRepository extends JpaRepository<Booking, Long> , JpaSpe
             @Param("eventId") Long eventId,
             @Param("statuses") Collection<BookingStatus> statuses
     );
+
+    boolean existsByCustomerIdAndEventIdAndStatus(
+            Long customerId,
+            Long eventId,
+            BookingStatus status
+    );
 }
