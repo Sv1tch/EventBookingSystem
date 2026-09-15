@@ -33,4 +33,12 @@ public class CreateCustomerRequest {
     @NotBlank(message = "Phone number can't be blank")
     private String phoneNumber;
 
+    @NotBlank(message = "Password can't be blank")
+    @Size(
+            min = 8,
+            max = 255,
+            message = "Password must be between 8 and 255 characters"
+    )
+    private String password;
+
 }

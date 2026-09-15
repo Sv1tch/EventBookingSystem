@@ -13,7 +13,7 @@ public class ReviewResponse {
 
     private Long id;
 
-    private int rating;
+    private Integer rating;
 
     private String comment;
 

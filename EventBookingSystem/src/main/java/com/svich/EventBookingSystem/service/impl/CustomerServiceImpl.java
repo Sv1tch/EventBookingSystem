@@ -15,6 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -26,6 +27,7 @@ public class CustomerServiceImpl implements CustomerService {
 
     private final CustomerRepository customerRepository;
     private final CustomerMapper customerMapper;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public CustomerResponse create(CreateCustomerRequest request){
@@ -41,7 +43,10 @@ public class CustomerServiceImpl implements CustomerService {
             throw new CustomerAlreadyExistsException("Customer with email " + request.getEmail() + " already exists");
         }
 
+        String password = passwordEncoder.encode(request.getPassword());
+
         Customer customer = customerMapper.toEntity(request);
+        customer.setPassword(password);
 
         LocalDateTime currentTime = LocalDateTime.now();
         customer.setCreatedAt(currentTime);

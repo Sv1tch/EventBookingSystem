@@ -158,14 +158,14 @@ public class ReviewServiceImpl implements ReviewService {
     @Override
     @Transactional(readOnly = true)
     public Page<ReviewResponse> findReviews(
-            int rating,
+            Integer rating,
             Long customerId,
             Long eventId,
             Pageable pageable
     ){
         Specification<Review> spec = (root, query, criteriaBuilder) -> null;
 
-        if(rating >= 1 && rating <= 5){
+        if(rating != null && rating >= 1 && rating <= 5){
             spec = spec.and(ReviewSpecification.hasRating(rating));
         }
         if(customerId != null){

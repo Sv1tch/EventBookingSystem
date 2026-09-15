@@ -12,7 +12,7 @@ public class UpdateReviewRequest {
 
     @Min(value = 1, message = "Rating can't be less than 1")
     @Max(value = 5, message = "Rating can't be greater than 5")
-    private int rating;
+    private Integer rating;
 
     @Size(
             max = 500,

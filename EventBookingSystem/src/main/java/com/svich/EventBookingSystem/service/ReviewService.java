@@ -14,7 +14,7 @@ public interface ReviewService {
     void deleteById(Long reviewId);
 
     Page<ReviewResponse> findReviews(
-            int rating,
+            Integer rating,
             Long customerId,
             Long eventId,
             Pageable pageable

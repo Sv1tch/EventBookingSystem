@@ -5,7 +5,7 @@ import org.springframework.data.jpa.domain.Specification;
 
 public class ReviewSpecification {
 
-    public static Specification<Review> hasRating(int rating){
+    public static Specification<Review> hasRating(Integer rating){
         return (root, query, criteriaBuilder) ->
                 criteriaBuilder.equal(
                         root.get("rating"),

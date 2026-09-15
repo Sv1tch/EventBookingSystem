@@ -50,7 +50,7 @@ public class ReviewController {
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "createdAt") String sortBy,
             @RequestParam(defaultValue = "desc") String direction,
-            @RequestParam(required = false) int rating,
+            @RequestParam(required = false) Integer rating,
             @RequestParam(required = false) Long customerId,
             @RequestParam(required = false) Long eventId
     ){

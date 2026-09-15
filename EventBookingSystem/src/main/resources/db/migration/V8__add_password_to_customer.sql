@@ -1,0 +1,2 @@
+ALTER TABLE app_customer
+ADD COLUMN password VARCHAR(255) NOT NULL ;
